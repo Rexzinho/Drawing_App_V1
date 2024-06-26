@@ -16,7 +16,8 @@ function DrawingApp() {
     layerIndex, setLayerIndex,
     action, setAction,
     tool, setTool,
-    selectedElement, setSelectedElement
+    selectedElement, setSelectedElement,
+    roughSets, setRoughSets
 
   } = useContext(DrawingContext);
 
@@ -35,7 +36,7 @@ function DrawingApp() {
     getElementAtPosition, 
     adjustElementCoordinates, 
     cursorForPosition,
-    resizedCoordinates
+    resizedCoordinates,
   
   } = DrawingFunctions();
 
@@ -103,11 +104,11 @@ function DrawingApp() {
     }
     else{
       const id = selectedLayer.elements.length;
-      const element = createElement(id, mouseX, mouseY, mouseX, mouseY, tool);
+      const roughConfigs = {...roughSets};
+      const element = createElement(id, mouseX, mouseY, mouseX, mouseY, tool, roughConfigs);
       const newElements = [...selectedLayer.elements, element];
       setSelectedLayer( selectedLayer => ({...selectedLayer, elements: newElements}));
       setSelectedElement(element);
-      console.log(element);
 
       setAction("drawing");
     }
@@ -128,21 +129,21 @@ function DrawingApp() {
 
     if(action === "drawing"){
       const index = selectedLayer.elements.length - 1;
-      const { x1, y1 } = selectedLayer.elements[index];
-      updateElement(index, x1, y1, mouseX, mouseY, tool);
+      const { x1, y1, roughConfigs } = selectedLayer.elements[index];
+      updateElement(index, x1, y1, mouseX, mouseY, tool, roughConfigs);
     }
     else if(action === "moving"){
-      const { id, x1, y1, x2, y2, type, offsetX, offsetY } = selectedElement;
+      const { id, x1, y1, x2, y2, type, offsetX, offsetY, roughConfigs } = selectedElement;
       const width = x2 - x1;
       const height = y2 - y1; 
       const newX1 = mouseX - offsetX;
       const newY1 = mouseY - offsetY;
-      updateElement(id, newX1, newY1, newX1 + width, newY1 + height, type);
+      updateElement(id, newX1, newY1, newX1 + width, newY1 + height, type, roughConfigs);
     }
     else if(action === "resizing"){
-      const { id, type, position, ...coordinates } = selectedElement;
+      const { id, type, roughConfigs, position, ...coordinates} = selectedElement;
       const {x1, y1, x2, y2} = resizedCoordinates(mouseX, mouseY, position, coordinates);
-      updateElement(id, x1, y1, x2, y2, type);
+      updateElement(id, x1, y1, x2, y2, type, roughConfigs);
     }
   }
 
@@ -150,13 +151,12 @@ function DrawingApp() {
 
     if(selectedLayer.hidden || selectedLayer.elements.length === 0) return;
 
-    const index = selectedElement.id
-    console.log(selectedElement.id);
-    const {id, type} = selectedLayer.elements[index];
+    const index = selectedElement.id;
+    const {id, type, roughConfigs} = selectedLayer.elements[index];
 
     if(action === "drawing" || action === "resizing"){
-      const {x1, y1, x2, y2} = adjustElementCoordinates(selectedLayer.elements[index]);
-      updateElement(id, x1, y1, x2, y2, type);
+      const {x1, y1, x2, y2,} = adjustElementCoordinates(selectedLayer.elements[index]);
+      updateElement(id, x1, y1, x2, y2, type, roughConfigs);
     }
     console.log(layers);
     setAction("none");
@@ -178,23 +178,38 @@ function DrawingApp() {
           id="rectangle"
           checked={tool === "rectangle"}
           onChange={() => setTool("rectangle")}
-        />
-        <br/>
+        /><br/>
         <label htmlFor="selection">Selection</label>
         <input 
           type="radio" 
           id="selection"
           checked={tool === "selection"}
           onChange={() => setTool("selection")}
+        /><br/>
+        <label htmlFor="selection">Color</label>
+        <label htmlFor="color">Color</label>
+        <input 
+          value={roughSets.stroke}
+          type="color" 
+          id="color"
+          onChange={(e) => setRoughSets({...roughSets, stroke: e.target.value})}
         />
-        <br/>
+        <label htmlFor="selection">Width </label>
+        <input 
+          value={roughSets.strokeWidth}
+          type="range" 
+          min="1"
+          max="8"
+          id="width"
+          onChange={(e) => setRoughSets({...roughSets, strokeWidth: e.target.value})}
+        /><br/>
       </div>
       <div className="canvas-container">
         <div className="layers-container">
           <button onClick={createLayer}>
-              Criar camada
+              Create Layer
             </button>
-          <p>Camadas:</p>
+          <p>Layers:</p>
           {layers.map(({name, id}, index) => (
             <div 
               key={id} 
@@ -202,11 +217,11 @@ function DrawingApp() {
               id={`layer-${id}`}
             >
               <div className="layer-name" onClick={() => selectLayer(id)}>
-                {name}
+                  {name}
               </div>
               <div className="layer-buttons" key={id}>
-                <button onClick={() => hideLayer(id)}>Ocultar</button>
-                <button onClick={() => deleteLayer(id)}>Deletar</button>
+                  <button onClick={() => hideLayer(id)}>Hide</button>
+                  <button onClick={() => deleteLayer(id)}>Delete</button>
               </div>
             </div>
           ))}

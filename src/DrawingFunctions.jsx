@@ -6,22 +6,23 @@ const generator = rough.generator();
 
 const DrawingFunctions = () => {
 
-  const { selectedLayer, setSelectedLayer } = useContext(DrawingContext);
+  const { selectedLayer, setSelectedLayer} = useContext(DrawingContext);
   
-  const createElement = (id, x1, y1, x2, y2, tool) => {
+  const createElement = (id, x1, y1, x2, y2, tool, roughConfigs) => {
 
     const roughElement = tool === "line" 
-    ? generator.line(x1, y1, x2, y2)
-    : generator.rectangle(x1, y1, x2-x1, y2-y1); 
+    ? generator.line(x1, y1, x2, y2, {...roughConfigs, stroke: getRgb(roughConfigs.stroke)})
+    : generator.rectangle(x1, y1, x2-x1, y2-y1, {...roughConfigs, stroke: getRgb(roughConfigs.stroke)}); 
     // o routhElement, que se encontra dentro de cada um dos objetos de elements, serve para criar o
     // elemento usando roughCanvas.draw(roughElement)
     
-    return { id, x1, y1, x2, y2, type: tool, roughElement}
+
+    return { id, x1, y1, x2, y2, type: tool, roughElement, roughConfigs}
   }
   
-  const updateElement = (id, x1, y1, x2, y2, tool) => {
+  const updateElement = (id, x1, y1, x2, y2, tool, roughConfigs) => {
 
-    const updatedElement = createElement(id, x1, y1, x2, y2, tool);
+    const updatedElement = createElement(id, x1, y1, x2, y2, tool, roughConfigs);
 
     // update single layer
     const newElements = selectedLayer.elements;
@@ -128,6 +129,14 @@ const DrawingFunctions = () => {
         return null;
     }
 
+  }
+
+  const getRgb = (color) => {
+
+    const r = parseInt(color.substr(1, 2), 16);
+    const g = parseInt(color.substr(3, 2), 16);
+    const b = parseInt(color.substr(5, 2), 16);
+    return `rgb(${r}, ${g}, ${b})`;
   }
 
   return { createElement, updateElement, getCanvasCoordinates, getElementAtPosition, adjustElementCoordinates, cursorForPosition, resizedCoordinates}
