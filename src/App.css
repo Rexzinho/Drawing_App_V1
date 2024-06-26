@@ -1,0 +1,52 @@
+*{
+    font-family: Jetbrains Mono;
+}
+.layer{
+    display:flex;
+    height:30px;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid black;
+    width: 350px;
+    padding: 10px;
+}
+#canvas{
+    cursor: crosshair;
+}
+.layer-name:hover{
+    cursor:pointer;
+}
+.layer-name{
+    display:flex;
+    align-items: center;
+    height: 100%;
+    width: 200px;
+}
+.layer button:hover{
+    cursor:pointer;
+}
+.selectedLayer{
+    background-color: rgb(154, 154, 209);
+}
+.hiddenLayer{
+    opacity: 50%;
+}
+.layer-buttons{
+    width: 150px;
+}
+.layers-container{
+    border-style: solid;
+    border-color: rgb(85, 85, 85);
+    border-width: 1px 0 1px 1px;
+    padding: 15px;
+}
+.tools-container{
+    border-style: solid;
+    border-color: rgb(85, 85, 85);
+    border-width: 1px 1px 0px 1px;
+    width: 272px;
+    padding: 15px;
+}
+.canvas-container{
+    display:flex;
+}
