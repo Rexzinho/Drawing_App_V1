@@ -20,7 +20,9 @@ const DrawingProvider = ({children}) => {
     const [selectedElement, setSelectedElement] = useState();
     const [roughSets, setRoughSets] = useState({
         stroke: "#00000",
-        strokeWidth: 1
+        strokeWidth: 1,
+        fill: "#FFFFFF",
+        fillStyle: 'solid'
     })
 
     return(

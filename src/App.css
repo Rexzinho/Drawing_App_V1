@@ -40,18 +40,23 @@
     border-width: 1px 0 1px 1px;
     padding: 15px;
 }
-.tools-container{
-    border-style: solid;
-    border-color: rgb(85, 85, 85);
-    border-width: 1px 1px 0px 1px;
-    width: 272px;
-    padding: 15px;
-}
+
 .canvas-container{
     display:flex;
 }
 
 /* tools */
+
+.tools-container{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border-style: solid;
+    border-color: rgb(85, 85, 85);
+    border-width: 1px 1px 0px 1px;
+    width: fit-content;
+    padding: 15px;
+}
 
 #colorLabel{
     height: 20px;

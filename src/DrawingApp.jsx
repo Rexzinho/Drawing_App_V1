@@ -1,4 +1,4 @@
-import { useLayoutEffect, useEffect, useContext } from 'react';
+import { useLayoutEffect, useEffect, useContext, useState } from 'react';
 import { DrawingContext } from './contexts/DrawingContext';
 import rough from 'roughjs/bundled/rough.esm';
 
@@ -39,6 +39,8 @@ function DrawingApp() {
     resizedCoordinates,
   
   } = DrawingFunctions();
+
+  const [isFilled, setIsFilled] = useState(false);
 
   // atualizar layers quando a selectedLayer é alterada
   useEffect(() => {
@@ -104,7 +106,7 @@ function DrawingApp() {
     }
     else{
       const id = selectedLayer.elements.length;
-      const roughConfigs = {...roughSets};
+      const roughConfigs = isFilled ? {...roughSets} : {...roughSets, fill: "rgba(0, 0, 0, 0)"}
       const element = createElement(id, mouseX, mouseY, mouseX, mouseY, tool, roughConfigs);
       const newElements = [...selectedLayer.elements, element];
       setSelectedLayer( selectedLayer => ({...selectedLayer, elements: newElements}));
@@ -172,6 +174,7 @@ function DrawingApp() {
           checked={tool === "line"}
           onChange={() => setTool("line")}
         /><br/>
+
         <label htmlFor="rectangle">Rectangle</label>
         <input 
           type="radio" 
@@ -179,6 +182,7 @@ function DrawingApp() {
           checked={tool === "rectangle"}
           onChange={() => setTool("rectangle")}
         /><br/>
+
         <label htmlFor="selection">Selection</label>
         <input 
           type="radio" 
@@ -186,23 +190,38 @@ function DrawingApp() {
           checked={tool === "selection"}
           onChange={() => setTool("selection")}
         /><br/>
-        <label htmlFor="selection">Color</label>
-        <label htmlFor="color">Color</label>
+
+        <label htmlFor="stroke">Color</label>
         <input 
           value={roughSets.stroke}
           type="color" 
-          id="color"
+          id="stroke"
           onChange={(e) => setRoughSets({...roughSets, stroke: e.target.value})}
         />
-        <label htmlFor="selection">Width </label>
+
+        <label htmlFor="strokeWidth">Width</label>
         <input 
-          value={roughSets.strokeWidth}
-          type="range" 
-          min="1"
-          max="8"
-          id="width"
-          onChange={(e) => setRoughSets({...roughSets, strokeWidth: e.target.value})}
+        value={roughSets.strokeWidth}
+        type="range" 
+        min="1"
+        max="8"
+        id="strokeWidth"
+        onChange={(e) => setRoughSets({...roughSets, strokeWidth: e.target.value})}
         /><br/>
+
+        <label htmlFor="isFilled">Fill</label>
+        <input
+          type="checkbox"
+          id="isFilled"
+          checked={isFilled}
+          onChange={() => setIsFilled(prevIsFilled => !prevIsFilled)}
+        />
+        <input 
+          value={roughSets.fill}
+          type="color" 
+          id="fill"
+          onChange={(e) => {setRoughSets({...roughSets, fill: e.target.value})}}
+        />
       </div>
       <div className="canvas-container">
         <div className="layers-container">

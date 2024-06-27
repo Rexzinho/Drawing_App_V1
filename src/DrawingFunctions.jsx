@@ -10,14 +10,18 @@ const DrawingFunctions = () => {
   
   const createElement = (id, x1, y1, x2, y2, tool, roughConfigs) => {
 
-    const roughElement = tool === "line" 
-    ? generator.line(x1, y1, x2, y2, {...roughConfigs, stroke: getRgb(roughConfigs.stroke)})
-    : generator.rectangle(x1, y1, x2-x1, y2-y1, {...roughConfigs, stroke: getRgb(roughConfigs.stroke)}); 
+    if(tool === "line"){
+      const lineSets = {stroke: roughConfigs.stroke, strokeWidth: roughConfigs.strokeWidth}
+      const roughElement = generator.line(x1, y1, x2, y2, {...lineSets});
+      return { id, x1, y1, x2, y2, type: tool, roughElement, roughConfigs: {...lineSets}}
+    } 
+    else{
+      const roughElement = generator.rectangle(x1, y1, x2-x1, y2-y1, {...roughConfigs}); 
+      return { id, x1, y1, x2, y2, type: tool, roughElement, roughConfigs}
+    }
+    
     // o routhElement, que se encontra dentro de cada um dos objetos de elements, serve para criar o
     // elemento usando roughCanvas.draw(roughElement)
-    
-
-    return { id, x1, y1, x2, y2, type: tool, roughElement, roughConfigs}
   }
   
   const updateElement = (id, x1, y1, x2, y2, tool, roughConfigs) => {
