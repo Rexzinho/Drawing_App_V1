@@ -52,13 +52,19 @@ input[type="checkbox"]:hover{
 .draw-button{
     display: flex;
     justify-content: center;
-    background-color: #121212;
+    background-color: transparent;
     border: none;
 }
 .draw-button:hover{
     cursor:pointer;
 }
-
+.hide-button{
+    width: 40px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: right;
+}
 .layers-container{
     border-style: solid;
     border-color: rgb(85, 85, 85);
@@ -71,7 +77,9 @@ input[type="checkbox"]:hover{
     justify-content: space-between;
     height: 100%;
 }
-
+.hidden{
+    opacity: 0%;
+}
 .canvas-container{
     display:flex;
 }
@@ -124,6 +132,7 @@ input[type="checkbox"]:hover{
 .layers-container,
 .tools-container{
     font-family: Inter;
+    font-size: 13px;
     color: white;
     background-color: #121212;
 }

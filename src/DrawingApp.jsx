@@ -2,13 +2,9 @@ import { useLayoutEffect, useEffect, useContext, useState } from 'react';
 import { DrawingContext } from './contexts/DrawingContext';
 import rough from 'roughjs/bundled/rough.esm';
 
+import logos from "./assets/index";
+
 import "./App.css";
-import LayerSvg from './assets/Layer.svg';
-import TrashSvg from './assets/Trash.svg';
-import Line from './assets/Line.svg';
-import Square from './assets/Square.svg';
-import Selection from './assets/Selection.svg';
-import Arrow from './assets/Arrow.svg';
 
 import DrawingLayers from './DrawingLayers';
 import DrawingFunctions from './DrawingFunctions';
@@ -184,7 +180,7 @@ function DrawingApp() {
             : "draw-button tool"} 
           onClick={() => setTool("rectangle")}
         >
-          <img src={Square} alt="Square"/>
+          <img src={logos.Square} alt="Square"/>
         </button>
         <button 
           className={tool === "line"
@@ -192,7 +188,7 @@ function DrawingApp() {
             : "draw-button tool"} 
           onClick={() => setTool("line")}
         >
-          <img src={Line} alt="Line"/>
+          <img src={logos.Line} alt="Line"/>
         </button>
         <button 
             className={tool === "selection"
@@ -200,7 +196,7 @@ function DrawingApp() {
               : "draw-button tool"} 
           onClick={() => setTool("selection")}
         >
-          <img src={Selection} alt="Line"/>
+          <img src={logos.Selection} alt="Line"/>
         </button>
 
         <label htmlFor="stroke">Color</label>
@@ -248,26 +244,31 @@ function DrawingApp() {
                   <div className="layer-name" onClick={() => selectLayer(layer.id)}>
                       {layer.name}
                   </div>
-                  <input
-                    type="checkbox" 
-                    checked={!layer.hidden}
-                    onChange={() => hideLayer(index)}
-                    />
+                  <button
+                    className="draw-button hide-button"
+                    onClick={() => hideLayer(index)}
+                  >
+                    <img 
+                      className={layer.hidden && "hidden"} 
+                      src={logos.View}
+                      style={{width: "10px"}}
+                      />
+                  </button>
                 </div>
               ))}
             </div>
             <div className="layer-buttons" key={selectedLayer.id}>
               <button onClick={createLayer} className="draw-button">
-                <img src={LayerSvg} alt="CreateLayer" />
+                <img src={logos.Layer} alt="CreateLayer" />
               </button>
               <button onClick={() => deleteLayer(selectedLayer.id)} className="draw-button">
-                <img src={TrashSvg} alt="DeleteLayer" />
+                <img src={logos.Trash} alt="DeleteLayer" />
               </button>
               <button onClick={() => upLayer(selectedLayer.id)} className="draw-button">
-                <img src={Arrow} alt="DeleteLayer" />
+                <img src={logos.Arrow} alt="DeleteLayer" />
               </button>
               <button onClick={() => downLayer(selectedLayer.id)} className="draw-button">
-                <img src={Arrow} alt="DeleteLayer" style={{transform: "rotate(180deg)"}}/>
+                <img src={logos.Arrow} alt="DeleteLayer" style={{transform: "rotate(180deg)"}}/>
               </button>
             </div>
           </div>
