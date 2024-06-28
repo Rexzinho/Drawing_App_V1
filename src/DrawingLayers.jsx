@@ -37,16 +37,15 @@ const DrawingLayers = () => {
       });
   }
 
-  const hideLayer = (id) => {
+  const hideLayer = (index) => {
 
-      const index = layers.findIndex(layer => layer.id === id);
-
+      console.log(index);
       const newLayer = {...layers[index], hidden: !layers[index].hidden}
       const newLayers = [...layers];
       newLayers[index] = newLayer;
       setLayers(newLayers);
 
-      if(selectedLayer.id === id)
+      if(layerIndex === index)
         setSelectedLayer(selectedLayer => ({...selectedLayer, hidden: !selectedLayer.hidden}));
   }
 
@@ -54,23 +53,14 @@ const DrawingLayers = () => {
 
       if(layers.length === 1) return;
 
-      const index = layers.findIndex(layer => layer.id === id);
-
       const layersCopy = [...layers];
       const newLayers = layersCopy.filter(layerCopy => layerCopy.id !== id);
       setLayers(newLayers);
 
-      // caso a camada deletada venha antes da camada selecionada, o layerIndex irá ir uma posição
-      // para trás
-      if(layerIndex > index){
-        setLayerIndex(l => l - 1);
-      }
-      else if(layerIndex === index){
-        const newIndex = newLayers.length - 1;
-        const newSelectedLayer = newLayers[newIndex];
-        setSelectedLayer(newSelectedLayer);
-        setLayerIndex(newIndex);
-      }
+      const newIndex = layerIndex === 0 ?  0 : layerIndex - 1;
+      const newSelectedLayer = newLayers[newIndex];
+      setSelectedLayer(newSelectedLayer);
+      setLayerIndex(newIndex);
   }
 
   return { createLayer, selectLayer, hideLayer, deleteLayer }

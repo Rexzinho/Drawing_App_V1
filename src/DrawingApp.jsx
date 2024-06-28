@@ -3,6 +3,8 @@ import { DrawingContext } from './contexts/DrawingContext';
 import rough from 'roughjs/bundled/rough.esm';
 
 import "./App.css";
+import LayerSvg from './assets/Layer.svg';
+import TrashSvg from './assets/Trash.svg';
 
 import DrawingLayers from './DrawingLayers';
 import DrawingFunctions from './DrawingFunctions';
@@ -63,6 +65,18 @@ function DrawingApp() {
     // novamente. Ele é renderizado usando o roughElement de cada elemento do canva, desenhando ele
     // através de roughCanvas.draw(roughElement)
 
+    // a array layers precisa ser exibida ao contrário pois os últimos elementos renderizados 
+    // sobrepoem os que foram renderizados anteriormente
+    
+    layers.slice().reverse().forEach(layer => {
+      if (!layer.hidden && layer.elements) {
+        layer.elements.forEach(({ roughElement }) => {
+          roughCanvas.draw(roughElement);
+        });
+      }
+    });
+
+    /*
     layers.map(layer => {
       if(!layer.hidden && layer.elements){
           layer.elements.map(({roughElement}) => {
@@ -70,6 +84,7 @@ function DrawingApp() {
           });
       }
     });
+    */
 
   }, [selectedLayer, layerIndex, layers]); 
 
@@ -165,7 +180,7 @@ function DrawingApp() {
   }
 
   return (
-    <>
+    <div class="drawing-app">
       <div className="tools-container">
         <label htmlFor="line">Line</label>
         <input 
@@ -225,38 +240,47 @@ function DrawingApp() {
       </div>
       <div className="canvas-container">
         <div className="layers-container">
-          <button onClick={createLayer}>
-              Create Layer
-            </button>
-          <p>Layers:</p>
-          {layers.map(({name, id}, index) => (
-            <div 
-              key={id} 
-              className={id === selectedLayer.id ? "layer selectedLayer" : "layer"} 
-              id={`layer-${id}`}
-            >
-              <div className="layer-name" onClick={() => selectLayer(id)}>
-                  {name}
-              </div>
-              <div className="layer-buttons" key={id}>
-                  <button onClick={() => hideLayer(id)}>Hide</button>
-                  <button onClick={() => deleteLayer(id)}>Delete</button>
-              </div>
+          <div className="layers-box">
+            <div className="layers-display">
+              {layers.map((layer, index)  => (
+                <div 
+                  key={layer.id} 
+                  className={layer.id === selectedLayer.id ? "layer selectedLayer" : "layer"} 
+                  id={`layer-${layer.id}`}
+                >
+                  <div className="layer-name" onClick={() => selectLayer(layer.id)}>
+                      {layer.name}
+                  </div>
+                  <input
+                    type="checkbox" 
+                    checked={!layer.hidden}
+                    onChange={() => hideLayer(index)}
+                    />
+                </div>
+              ))}
             </div>
-          ))}
+            <div className="layer-buttons" key={selectedLayer.id}>
+              <button onClick={createLayer}>
+                <img src={LayerSvg} alt="CreateLayer" />
+              </button>
+              <button onClick={() => deleteLayer(selectedLayer.id)}>
+                <img src={TrashSvg} alt="DeleteLayer" />
+              </button>
+            </div>
+          </div>
         </div>
         <canvas
           style={{border: "1px solid black"}}
           id="canvas"
           width="800"
-          height="400"
+          height="500"
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
         >
         </canvas><br/>
       </div>
-    </>
+    </div>
   )
 }
 

@@ -1,17 +1,26 @@
-*{
-    font-family: Jetbrains Mono;
+html, body{
+    background-color: black;
+    padding: 0;
+    margin: 0;
 }
+#canvas{
+    cursor: crosshair;
+    background-color: white;
+}
+.drawing-app{
+    width: fit-content;
+}
+
+/* layers */
+
 .layer{
     display:flex;
     height:30px;
     align-items: center;
     justify-content: space-between;
-    border: 1px solid black;
+    border: 1px solid rgb(27, 27, 27);
     width: 350px;
     padding: 10px;
-}
-#canvas{
-    cursor: crosshair;
 }
 .layer-name:hover{
     cursor:pointer;
@@ -20,25 +29,40 @@
     display:flex;
     align-items: center;
     height: 100%;
-    width: 200px;
-}
-.layer button:hover{
-    cursor:pointer;
+    width: 90%;
 }
 .selectedLayer{
-    background-color: rgb(154, 154, 209);
+    background-color: #565656;
+    border: 1px solid #D9D9D9;
 }
 .hiddenLayer{
     opacity: 50%;
 }
+.layer input[type="checkbox"]:hover{
+    cursor: pointer;
+}
 .layer-buttons{
-    width: 150px;
+    border: 1px solid #D9D9D9;
+    padding: 10px;
+}
+.layer-buttons button{
+    background-color: #121212;
+    border: none;
+}
+.layer-buttons button:hover{
+    cursor:pointer;
 }
 .layers-container{
     border-style: solid;
     border-color: rgb(85, 85, 85);
     border-width: 1px 0 1px 1px;
     padding: 15px;
+}
+.layers-box{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
 }
 
 .canvas-container{
@@ -54,7 +78,6 @@
     border-style: solid;
     border-color: rgb(85, 85, 85);
     border-width: 1px 1px 0px 1px;
-    width: fit-content;
     padding: 15px;
 }
 
@@ -66,7 +89,26 @@
 
 .tools-container input[type=color]{
 	display: block;
-	width: 32px;
-	height: 32px;
+	width: 25px;
+	height: 25;
 	border: none;
+}
+.tools-containerinput input[type="color"]::-moz-color-swatch {
+    border: none;
+ }
+.tools-container input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+    border-radius: 0;
+ }
+.tools-container input[type="color"]::-webkit-color-swatch {
+    border: none;
+ }
+
+/* other */
+
+.layers-container,
+.tools-container{
+    font-family: Inter;
+    color: white;
+    background-color: #121212;
 }

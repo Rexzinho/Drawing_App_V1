@@ -72,6 +72,7 @@ const DrawingFunctions = () => {
     
   const getElementAtPosition = (x, y, elements) => {
       return elements
+        .slice().reverse()
         .map(element => ({...element, position: positionWithinElement(x, y, element)}))
         .find(element => element.position !== null);
   }
