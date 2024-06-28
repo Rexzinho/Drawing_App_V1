@@ -5,6 +5,10 @@ import rough from 'roughjs/bundled/rough.esm';
 import "./App.css";
 import LayerSvg from './assets/Layer.svg';
 import TrashSvg from './assets/Trash.svg';
+import Line from './assets/Line.svg';
+import Square from './assets/Square.svg';
+import Selection from './assets/Selection.svg';
+import Arrow from './assets/Arrow.svg';
 
 import DrawingLayers from './DrawingLayers';
 import DrawingFunctions from './DrawingFunctions';
@@ -28,6 +32,8 @@ function DrawingApp() {
     selectLayer,
     hideLayer,
     deleteLayer,
+    upLayer,
+    downLayer
   
   } = DrawingLayers();
 
@@ -75,16 +81,6 @@ function DrawingApp() {
         });
       }
     });
-
-    /*
-    layers.map(layer => {
-      if(!layer.hidden && layer.elements){
-          layer.elements.map(({roughElement}) => {
-            roughCanvas.draw(roughElement);
-          });
-      }
-    });
-    */
 
   }, [selectedLayer, layerIndex, layers]); 
 
@@ -180,31 +176,32 @@ function DrawingApp() {
   }
 
   return (
-    <div class="drawing-app">
+    <div className="drawing-app">
       <div className="tools-container">
-        <label htmlFor="line">Line</label>
-        <input 
-          type="radio" 
-          id="line"
-          checked={tool === "line"}
-          onChange={() => setTool("line")}
-        /><br/>
-
-        <label htmlFor="rectangle">Rectangle</label>
-        <input 
-          type="radio" 
-          id="rectangle"
-          checked={tool === "rectangle"}
-          onChange={() => setTool("rectangle")}
-        /><br/>
-
-        <label htmlFor="selection">Selection</label>
-        <input 
-          type="radio" 
-          id="selection"
-          checked={tool === "selection"}
-          onChange={() => setTool("selection")}
-        /><br/>
+        <button 
+          className={tool === "rectangle"
+            ? "draw-button tool selectedTool" 
+            : "draw-button tool"} 
+          onClick={() => setTool("rectangle")}
+        >
+          <img src={Square} alt="Square"/>
+        </button>
+        <button 
+          className={tool === "line"
+            ? "draw-button selectedTool" 
+            : "draw-button tool"} 
+          onClick={() => setTool("line")}
+        >
+          <img src={Line} alt="Line"/>
+        </button>
+        <button 
+            className={tool === "selection"
+              ? "draw-button tool selectedTool" 
+              : "draw-button tool"} 
+          onClick={() => setTool("selection")}
+        >
+          <img src={Selection} alt="Line"/>
+        </button>
 
         <label htmlFor="stroke">Color</label>
         <input 
@@ -260,11 +257,17 @@ function DrawingApp() {
               ))}
             </div>
             <div className="layer-buttons" key={selectedLayer.id}>
-              <button onClick={createLayer}>
+              <button onClick={createLayer} className="draw-button">
                 <img src={LayerSvg} alt="CreateLayer" />
               </button>
-              <button onClick={() => deleteLayer(selectedLayer.id)}>
+              <button onClick={() => deleteLayer(selectedLayer.id)} className="draw-button">
                 <img src={TrashSvg} alt="DeleteLayer" />
+              </button>
+              <button onClick={() => upLayer(selectedLayer.id)} className="draw-button">
+                <img src={Arrow} alt="DeleteLayer" />
+              </button>
+              <button onClick={() => downLayer(selectedLayer.id)} className="draw-button">
+                <img src={Arrow} alt="DeleteLayer" style={{transform: "rotate(180deg)"}}/>
               </button>
             </div>
           </div>
