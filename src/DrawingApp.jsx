@@ -72,7 +72,7 @@ function DrawingApp() {
     
     layers.slice().reverse().forEach(layer => {
       if (!layer.hidden && layer.elements) {
-        layer.elements.forEach(({ roughElement }) => {
+        layer.elements.slice().reverse().forEach(({ roughElement }) => {
           roughCanvas.draw(roughElement);
         });
       }
@@ -99,6 +99,12 @@ function DrawingApp() {
 
     if(tool === "selection"){
       const element = getElementAtPosition(mouseX, mouseY, selectedLayer.elements);
+      const index = selectedLayer.elements.findIndex(({id}) => id === element.id);
+
+      const elementsCopy = [...selectedLayer.elements];
+      [elementsCopy[index], elementsCopy[0]] = [elementsCopy[0], elementsCopy[index]];
+      setSelectedLayer( selectedLayer => ({...selectedLayer, elements: elementsCopy}));
+      
       if(element){
         const offsetX = mouseX - element.x1;
         const offsetY = mouseY - element.y1;
@@ -115,7 +121,7 @@ function DrawingApp() {
       const id = selectedLayer.elements.length;
       const roughConfigs = isFilled ? {...roughSets} : {...roughSets, fill: "rgba(0, 0, 0, 0)"}
       const element = createElement(id, mouseX, mouseY, mouseX, mouseY, tool, roughConfigs);
-      const newElements = [...selectedLayer.elements, element];
+      const newElements = [element, ...selectedLayer.elements];
       setSelectedLayer( selectedLayer => ({...selectedLayer, elements: newElements}));
       setSelectedElement(element);
 
@@ -137,9 +143,9 @@ function DrawingApp() {
     }
 
     if(action === "drawing"){
-      const index = selectedLayer.elements.length - 1;
-      const { x1, y1, roughConfigs } = selectedLayer.elements[index];
-      updateElement(index, x1, y1, mouseX, mouseY, tool, roughConfigs);
+      const index = 0;
+      const { id, x1, y1, roughConfigs } = selectedLayer.elements[index];
+      updateElement(id, x1, y1, mouseX, mouseY, tool, roughConfigs);
     }
     else if(action === "moving"){
       const { id, x1, y1, x2, y2, type, offsetX, offsetY, roughConfigs } = selectedElement;
@@ -160,8 +166,8 @@ function DrawingApp() {
 
     if(selectedLayer.hidden || selectedLayer.elements.length === 0) return;
 
-    const index = selectedElement.id;
-    const {id, type, roughConfigs} = selectedLayer.elements[index];
+    const index = 0;
+    const {id, type, roughConfigs} = selectedLayer.elements[0];
 
     if(action === "drawing" || action === "resizing"){
       const {x1, y1, x2, y2,} = adjustElementCoordinates(selectedLayer.elements[index]);

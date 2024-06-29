@@ -14,17 +14,18 @@ const DrawingLayers = () => {
 
   const createLayer = () => {
 
-    setLayerIndex(layers.length);
-
+    setLayerIndex(0);
     const newLayersQty = layersQty + 1;
     setLayersQty(newLayersQty);
 
-    setSelectedLayer({
+    const newLayer = {
       name: `Layer-${newLayersQty}`,
       id: newLayersQty,
       elements: [],
       hidden: false
-    });
+    }
+    setSelectedLayer(newLayer);
+    setLayers([newLayer, ...layers]);
   }
 
   const selectLayer = (id) => {

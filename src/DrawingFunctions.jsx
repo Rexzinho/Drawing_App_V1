@@ -30,7 +30,7 @@ const DrawingFunctions = () => {
 
     // update single layer
     const newElements = selectedLayer.elements;
-    newElements[id] = updatedElement;
+    newElements[0] = updatedElement;
     setSelectedLayer( selectedLayer => ({...selectedLayer, elements: newElements}));
   }
 
@@ -72,7 +72,6 @@ const DrawingFunctions = () => {
     
   const getElementAtPosition = (x, y, elements) => {
       return elements
-        .slice().reverse()
         .map(element => ({...element, position: positionWithinElement(x, y, element)}))
         .find(element => element.position !== null);
   }
