@@ -94,6 +94,7 @@ function DrawingApp() {
   const handleMouseDown = (event) => {
 
     if(selectedLayer.hidden) return;
+    if(tool === "selection" && selectedLayer.elements.length === 0) return;
 
     const { mouseX, mouseY } = getCanvasCoordinates(event);
 
@@ -101,10 +102,11 @@ function DrawingApp() {
       const element = getElementAtPosition(mouseX, mouseY, selectedLayer.elements);
       const index = selectedLayer.elements.findIndex(({id}) => id === element.id);
 
-      const elementsCopy = [...selectedLayer.elements];
-      [elementsCopy[index], elementsCopy[0]] = [elementsCopy[0], elementsCopy[index]];
-      setSelectedLayer( selectedLayer => ({...selectedLayer, elements: elementsCopy}));
-      
+      const elementsCopy = selectedLayer.elements.filter((_, i) => i !== index);
+      const newElements = [element, ...elementsCopy];
+
+      setSelectedLayer( selectedLayer => ({...selectedLayer, elements: newElements}));
+
       if(element){
         const offsetX = mouseX - element.x1;
         const offsetY = mouseY - element.y1;
@@ -131,15 +133,19 @@ function DrawingApp() {
 
   const handleMouseMove = (event) => {
 
-    if(selectedLayer.hidden) return;
+    if(selectedLayer.hidden){
+      document.getElementById("canvas").style.cursor = "not-allowed"
+      return;
+    }
+    else
+      document.getElementById("canvas").style.cursor = "crosshair"
 
     const { mouseX, mouseY } = getCanvasCoordinates(event);
 
     if(tool === "selection"){
       const element =  getElementAtPosition(mouseX, mouseY, selectedLayer.elements);
-      document.getElementById("canvas").style.cursor = element 
-      ? cursorForPosition(element.position)
-      : "crosshair";
+      if(element)
+        document.getElementById("canvas").style.cursor = cursorForPosition(element.position);
     }
 
     if(action === "drawing"){
@@ -257,7 +263,7 @@ function DrawingApp() {
                     <img 
                       className={layer.hidden && "hidden"} 
                       src={logos.View}
-                      style={{width: "10px"}}
+                      style={{width: "8px"}}
                       />
                   </button>
                 </div>
@@ -280,7 +286,6 @@ function DrawingApp() {
           </div>
         </div>
         <canvas
-          style={{border: "1px solid black"}}
           id="canvas"
           width="800"
           height="500"

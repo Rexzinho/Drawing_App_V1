@@ -19,9 +19,9 @@ const DrawingProvider = ({children}) => {
     const [tool, setTool] = useState("rectangle");
     const [selectedElement, setSelectedElement] = useState();
     const [roughSets, setRoughSets] = useState({
-        stroke: "#00000",
+        stroke: "#FFFFFF",
         strokeWidth: 1,
-        fill: "#FFFFFF",
+        fill: "#121212",
         fillStyle: 'solid'
     })
 
