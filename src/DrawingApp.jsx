@@ -41,6 +41,7 @@ function DrawingApp() {
     adjustElementCoordinates, 
     cursorForPosition,
     resizedCoordinates,
+    drawElement
   
   } = DrawingFunctions();
 
@@ -69,12 +70,10 @@ function DrawingApp() {
 
     // a array layers precisa ser exibida ao contrário pois os últimos elementos renderizados 
     // sobrepoem os que foram renderizados anteriormente
-    
+
     layers.slice().reverse().forEach(layer => {
       if (!layer.hidden && layer.elements) {
-        layer.elements.slice().reverse().forEach(({ roughElement }) => {
-          roughCanvas.draw(roughElement);
-        });
+        layer.elements.slice().reverse().forEach(element => drawElement(roughCanvas, context,  element));
       }
     });
 
@@ -108,16 +107,23 @@ function DrawingApp() {
       setSelectedLayer( selectedLayer => ({...selectedLayer, elements: newElements}));
 
       if(element){
-        const offsetX = mouseX - element.x1;
-        const offsetY = mouseY - element.y1;
-        setSelectedElement({...element, offsetX, offsetY});
+        if(element.type === "pencil"){
+          const xOffsets = element.points.map(point => mouseX - point.x);
+          const yOffsets = element.points.map(point => mouseY - point.y);
+          setSelectedElement({...element, xOffsets, yOffsets});
+        }
+        else{
+          const offsetX = mouseX - element.x1;
+          const offsetY = mouseY - element.y1;
+          setSelectedElement({...element, offsetX, offsetY});
+        }
         if(element.position === "inside"){
           setAction("moving");
         }
         else{
           setAction("resizing");
         }
-      }
+      } 
     }
     else{
       const id = selectedLayer.elements.length;
@@ -154,12 +160,25 @@ function DrawingApp() {
       updateElement(id, x1, y1, mouseX, mouseY, tool, roughConfigs);
     }
     else if(action === "moving"){
-      const { id, x1, y1, x2, y2, type, offsetX, offsetY, roughConfigs } = selectedElement;
-      const width = x2 - x1;
-      const height = y2 - y1; 
-      const newX1 = mouseX - offsetX;
-      const newY1 = mouseY - offsetY;
-      updateElement(id, newX1, newY1, newX1 + width, newY1 + height, type, roughConfigs);
+      if(selectedElement.type === "pencil"){
+        const newPoints = selectedElement.points.map((_, index) => {
+          return {
+            x: mouseX - selectedElement.xOffsets[index],
+            y: mouseY - selectedElement.yOffsets[index]
+          }
+        });
+        const newElements = selectedLayer.elements;
+        newElements[selectedElement.id].points = newPoints;
+        setSelectedLayer( selectedLayer => ({...selectedLayer, elements: newElements}));
+      }
+      else{
+        const { id, x1, y1, x2, y2, type, offsetX, offsetY, roughConfigs } = selectedElement;
+        const width = x2 - x1;
+        const height = y2 - y1; 
+        const newX1 = mouseX - offsetX;
+        const newY1 = mouseY - offsetY;
+        updateElement(id, newX1, newY1, newX1 + width, newY1 + height, type, roughConfigs);
+      }
     }
     else if(action === "resizing"){
       const { id, type, roughConfigs, position, ...coordinates} = selectedElement;
@@ -175,7 +194,7 @@ function DrawingApp() {
     const index = 0;
     const {id, type, roughConfigs} = selectedLayer.elements[0];
 
-    if(action === "drawing" || action === "resizing"){
+    if((action === "drawing" || action === "resizing") && ['line', 'rectangle'].includes(type)){
       const {x1, y1, x2, y2,} = adjustElementCoordinates(selectedLayer.elements[index]);
       updateElement(id, x1, y1, x2, y2, type, roughConfigs);
     }
@@ -210,7 +229,14 @@ function DrawingApp() {
         >
           <img src={logos.Selection} alt="Line"/>
         </button>
-
+        <button 
+            className={tool === "pencil"
+              ? "draw-button tool selectedTool" 
+              : "draw-button tool"} 
+          onClick={() => setTool("pencil")}
+        >
+          <img src={logos.Brush} alt="Pencil"/>
+        </button>
         <label htmlFor="stroke">Color</label>
         <input 
           value={roughSets.stroke}
@@ -218,7 +244,6 @@ function DrawingApp() {
           id="stroke"
           onChange={(e) => setRoughSets({...roughSets, stroke: e.target.value})}
         />
-
         <label htmlFor="strokeWidth">Width</label>
         <input 
         value={roughSets.strokeWidth}
@@ -228,7 +253,6 @@ function DrawingApp() {
         id="strokeWidth"
         onChange={(e) => setRoughSets({...roughSets, strokeWidth: e.target.value})}
         /><br/>
-
         <label htmlFor="isFilled">Fill</label>
         <input
           type="checkbox"

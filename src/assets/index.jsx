@@ -5,6 +5,7 @@ import Square from './Square.svg';
 import Selection from './Selection.svg';
 import Trash from './Trash.svg';
 import View from './View.svg';
+import Brush from './Brush.svg';
 
 const logos = {
     Arrow,
@@ -13,7 +14,8 @@ const logos = {
     Square,
     Selection,
     Trash,
-    View
+    View,
+    Brush
 }
 
 export default logos;
