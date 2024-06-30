@@ -16,14 +16,8 @@ const DrawingProvider = ({children}) => {
 
     const [layerIndex, setLayerIndex] = useState(0);
     const [action, setAction] = useState("none");
-    const [tool, setTool] = useState("pencil");
+    const [tool, setTool] = useState("select");
     const [selectedElement, setSelectedElement] = useState();
-    const [roughSets, setRoughSets] = useState({
-        stroke: "#FFFFFF",
-        strokeWidth: 1,
-        fill: "#121212",
-        fillStyle: 'solid'
-    })
 
     return(
         <DrawingContext.Provider
@@ -35,7 +29,6 @@ const DrawingProvider = ({children}) => {
                 action, setAction,
                 tool, setTool,
                 selectedElement, setSelectedElement,
-                roughSets, setRoughSets
             }}
         >
             {children}

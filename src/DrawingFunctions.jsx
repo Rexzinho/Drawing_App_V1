@@ -11,20 +11,20 @@ const DrawingFunctions = () => {
 
   const { selectedLayer, setSelectedLayer} = useContext(DrawingContext);
   
-  const createElement = (id, x1, y1, x2, y2, tool, roughConfigs) => {
+  const createElement = (id, x1, y1, x2, y2, tool, configs) => {
 
     let roughElement;
 
     switch(tool){
       case "line":
-        const lineSets = {stroke: roughConfigs.stroke, strokeWidth: roughConfigs.strokeWidth}
+        const lineSets = {stroke: configs.stroke, strokeWidth: configs.strokeWidth}
         roughElement = generator.line(x1, y1, x2, y2, {...lineSets});
-        return { id, x1, y1, x2, y2, type: tool, roughElement, roughConfigs: {...lineSets}};
+        return { id, x1, y1, x2, y2, type: tool, roughElement, configs: {...lineSets}};
       case "rectangle":
-        roughElement = generator.rectangle(x1, y1, x2-x1, y2-y1, {...roughConfigs}); 
-        return { id, x1, y1, x2, y2, type: tool, roughElement, roughConfigs};
+        roughElement = generator.rectangle(x1, y1, x2-x1, y2-y1, {...configs}); 
+        return { id, x1, y1, x2, y2, type: tool, roughElement, configs};
       case "pencil":
-        return {id, type: tool, points: [{x: x1, y: y1}]};
+        return {id, type: tool, points: [{x: x1, y: y1}], configs};
       default:
         throw new Error(`Tool not recognised: ${tool}`);
     }
@@ -59,8 +59,8 @@ const DrawingFunctions = () => {
         roughCanvas.draw(element.roughElement);
         break;
       case "pencil":
-        const stroke = getSvgPathFromStroke(getStroke(element.points, {color: "#FFFFFF"}));
-        context.fillStyle = "white";
+        const stroke = getSvgPathFromStroke(getStroke(element.points, element.configs));
+        context.fillStyle = element.configs.color;
         context.fill(new Path2D(stroke));
         break;
       default:
@@ -182,15 +182,12 @@ const DrawingFunctions = () => {
 
   }
 
-  const getRgb = (color) => {
-
-    const r = parseInt(color.substr(1, 2), 16);
-    const g = parseInt(color.substr(3, 2), 16);
-    const b = parseInt(color.substr(5, 2), 16);
-    return `rgb(${r}, ${g}, ${b})`;
+  const createSelection = (x1, y1, x2, y2) => {
+    const roughElement = generator.rectangle(x1, y1, x2, y2, {stroke: "#00F0FF"}); 
+    return {x1, y1, x2, y2, roughElement}
   }
 
-  return { createElement, updateElement, drawElement, getCanvasCoordinates, getElementAtPosition, adjustElementCoordinates, cursorForPosition, resizedCoordinates}
+  return { createElement, updateElement, drawElement, getCanvasCoordinates, getElementAtPosition, adjustElementCoordinates, cursorForPosition, resizedCoordinates, createSelection}
 }
 
 export default DrawingFunctions;

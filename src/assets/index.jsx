@@ -6,6 +6,7 @@ import Selection from './Selection.svg';
 import Trash from './Trash.svg';
 import View from './View.svg';
 import Brush from './Brush.svg';
+import Select from './Select.svg';
 
 const logos = {
     Arrow,
@@ -15,7 +16,8 @@ const logos = {
     Selection,
     Trash,
     View,
-    Brush
+    Brush,
+    Select
 }
 
 export default logos;
