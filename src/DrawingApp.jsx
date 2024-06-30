@@ -48,7 +48,7 @@ function DrawingApp() {
   const [isFilled, setIsFilled] = useState(false);
   const [toolConfigs, setToolConfigs] = useState({
     stroke: "#FFFFFF",
-    strokeWidth: 3,
+    strokeWidth: 2,
     fill: "#121212",
     fillStyle: 'solid',
   });
@@ -86,7 +86,9 @@ function DrawingApp() {
     });
 
     if(selectedArea.roughElement){
+      console.log(selectedArea)
       roughCanvas.draw(selectedArea.roughElement);
+      console.log(roughCanvas);
     }
 
   }, [selectedLayer, layerIndex, layers, selectedArea]); 
@@ -141,6 +143,7 @@ function DrawingApp() {
     else if(tool === "select"){
       const area = createSelection(mouseX, mouseY, mouseX, mouseY);
       setSelectedArea(area);
+      console.log(area);
       setAction("selecting");
     }
     else{
@@ -293,26 +296,29 @@ function DrawingApp() {
         />
         <label htmlFor="strokeWidth">Width</label>
         <input 
-        value={toolConfigs.strokeWidth}
-        type="range" 
-        min="1"
-        max="8"
-        id="strokeWidth"
-        onChange={(e) => setToolConfigs({...toolConfigs, strokeWidth: e.target.value})}
+          value={toolConfigs.strokeWidth}
+          type="range" 
+          min="1"
+          max="8"
+          id="strokeWidth"
+          className="rangeInput"
+          onChange={(e) => setToolConfigs({...toolConfigs, strokeWidth: e.target.value})}
         /><br/>
         <label htmlFor="isFilled">Fill</label>
-        <input
-          type="checkbox"
-          id="isFilled"
-          checked={isFilled}
-          onChange={() => setIsFilled(prevIsFilled => !prevIsFilled)}
-        />
-        <input 
-          value={toolConfigs.fill}
-          type="color" 
-          id="fill"
-          onChange={(e) => {setToolConfigs({...toolConfigs, fill: e.target.value})}}
-        />
+        <button 
+          className="fillButton" 
+          onClick={() => setIsFilled(prevIsFilled => !prevIsFilled)}
+        >
+          {isFilled ? "+" : "-"}
+        </button>
+        {isFilled &&
+          <input 
+            value={toolConfigs.fill}
+            type="color" 
+            id="fill"
+            onChange={(e) => {setToolConfigs({...toolConfigs, fill: e.target.value})}}
+          />
+        }
       </div>
       <div className="canvas-container">
         <div className="layers-container">
@@ -334,7 +340,7 @@ function DrawingApp() {
                     <img 
                       className={layer.hidden && "hidden"} 
                       src={logos.View}
-                      style={{width: "8px"}}
+                      style={{width: "7px"}}
                       />
                   </button>
                 </div>

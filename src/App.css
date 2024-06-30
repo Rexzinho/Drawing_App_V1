@@ -35,7 +35,7 @@ html, body{
 }
 .layer:hover{
     border-color: #565656;
-    background-color: #1f1f1f;
+    background-color: rgba(0, 0, 0, 0.247);
 }
 .layer-name:hover{
     cursor:pointer;
@@ -47,14 +47,10 @@ html, body{
     width: 90%;
 }
 .selectedLayer{
-    background-color: #565656;
-    border-style: solid;
-    border-color: #D9D9D9;
+    background-color: #1E1E1E;
 }
 .selectedLayer:hover{
-    background-color: #565656;
-    border-style: solid;
-    border-color: #D9D9D9;
+    background-color: #1E1E1E;
 }
 .hiddenLayer{
     opacity: 50%;
@@ -87,6 +83,15 @@ input[type="checkbox"]:hover{
     display: flex;
     align-items: center;
     justify-content: right;
+}
+.fillButton{
+    border: none;
+    background: transparent;
+    color: white;
+    font-size: 1.1rem;
+}
+.fillButton:hover{
+    cursor: pointer;
 }
 .layers-container{
     border-style: solid;
@@ -129,36 +134,41 @@ input[type="checkbox"]:hover{
 	width: 20px;
 	height: 20px;
 	border: none;
+    background-color: rgba(255, 255, 255, 0.041);
 }
 .tools-container input[type=color]:hover{
 	cursor: pointer;
 }
-.tools-containerinput input[type="color"]::-moz-color-swatch {
-    border: none;
- }
 .tools-container input[type="color"]::-webkit-color-swatch-wrapper {
+    border-radius: 2px;
     padding: 0;
     border-radius: 0;
  }
 .tools-container input[type="color"]::-webkit-color-swatch {
     border: none;
  }
- .tool{
+ .rangeInput:hover{
+    cursor: pointer;
+ }
+.tool{
     opacity: 60%;
     transition: .2s;
- }
- .tool img{
+}
+.tool img{
     padding: 5px;
- }
- .selectedTool{
-    opacity: 100%;
- }
- .selectedTool img{
-    filter: invert(100%);
-    scale: 1.1;
-    background-color: rgb(255, 0, 0);
+}
+.tool img:hover{
+    background-color: #353535;
     border-radius: 5px;
- }
+}
+.selectedTool{
+    opacity: 100%;
+}
+.selectedTool img{
+    filter: invert(100%);
+    background-color: rgb(255, 0, 0) !important;
+    border-radius: 5px;
+}
 
 /* other */
 

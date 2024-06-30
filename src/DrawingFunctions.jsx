@@ -183,7 +183,7 @@ const DrawingFunctions = () => {
   }
 
   const createSelection = (x1, y1, x2, y2) => {
-    const roughElement = generator.rectangle(x1, y1, x2, y2, {stroke: "#00F0FF"}); 
+    const roughElement = generator.rectangle(x1, y1, x2-x1, y2-y1, {stroke: "#00F0FF"}); 
     return {x1, y1, x2, y2, roughElement}
   }
 
