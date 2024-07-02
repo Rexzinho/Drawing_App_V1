@@ -203,16 +203,21 @@ const DrawingFunctions = () => {
             ((element.x2 >= x1 && element.x2 <= x2 && element.y1 >= y1 && element.y1 <= y2) ||
             (element.x1 >= x1 && element.x1 <= x2 && element.y2 >= y1 && element.y2 <= y2))
           )
-          return element;
+            return element;
+          break;
         case "line":
           if(
             ((element.x1 >= x1 && element.x1 <= x2 && element.y1 >= y1 && element.y1 <= y2) ||
             (element.x2 >= x1 && element.x2 <= x2 && element.y2 >= y1 && element.y2 <= y2)) 
           )
-          return element;
-          return;
+            return element;
+          break;
         case "pencil":
-          return;
+          if(element.points.some(
+            point => point.x >= x1 && point.x <= x2 && point.y >= y1 && point.y <= y2
+          ))
+            return element;
+          break;
         default:
           throw new Error (`type not recognized: ${element.type}`);
       }
@@ -220,24 +225,35 @@ const DrawingFunctions = () => {
   }
 
   const resizeSelection = elements => {
-    let minX = elements[0].x1;
-    let maxX = elements[0].x2;
-    let minY = elements[0].y1;
-    let maxY = elements[0].y2;
-    elements.map(({x1, y1, x2, y2}) => {
-        minX = Math.min(minX, x1);
-        maxX = Math.max(maxX, x2);
-        // condição porque a linha na diagonal direita para cima o y2 e y1 são ao contrário
-        if(y1 > y2){
-          minY = Math.min(minY, y2);
-          maxY = Math.max(maxY, y1);
+    const first = elements[0]
+    let minX = first.x1 ? first.x1 : first.points[0].x;
+    let maxX = first.x2 ? first.x2 : first.points[0].x;
+    let minY = first.y1 ? first.y1 : first.points[0].y;
+    let maxY = first.y2 ? first.y2 : first.points[0].y;
+    elements.map((element) => {
+        if(element.type === "pencil"){
+          element.points.map(({x, y}) => {
+            minX = Math.min(minX, x);
+            maxX = Math.max(maxX, x);
+            minY = Math.min(minY, y);
+            maxY = Math.max(maxY, y);
+          })
         }
         else{
-          minY = Math.min(minY, y1);
-          maxY = Math.max(maxY, y2);
+          minX = Math.min(minX, element.x1);
+          maxX = Math.max(maxX, element.x2);
+          if(element.y1 > element.y2){
+            minY = Math.min(minY, element.y2);
+            maxY = Math.max(maxY, y1);
+          }
+          else{
+            minY = Math.min(minY, element.y1);
+            maxY = Math.max(maxY, element.y2);
+          }
         }
       }
     );
+    console.log(minX, minY, maxX, maxY);
     const newSelectedArea = createSelection(minX, minY, maxX, maxY);
     return newSelectedArea;
   }

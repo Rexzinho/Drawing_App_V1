@@ -150,15 +150,20 @@ function DrawingApp() {
       else{
         const element = getElementAtPosition(mouseX, mouseY, [selectedArea]);
         if(element && selectedElements.length > 0){
-          const newSelectedelements = selectedElements.map(element => {
-            const offsetX = mouseX - element.x1;
-            const offsetY = mouseY - element.y1;
-            return ({...element, offsetX, offsetY});
+          console.log(selectedElements);
+          const newSelectedElements = selectedElements.map(element => {
+            if(element.type === "pencil"){
+              const xOffsets = element.points.map(point => mouseX - point.x);
+              const yOffsets = element.points.map(point => mouseY - point.y);
+              return({...element, xOffsets, yOffsets});
+            }
+            else{
+              const offsetX = mouseX - element.x1;
+              const offsetY = mouseY - element.y1;
+              return ({...element, offsetX, offsetY});
+            }
           });
-          const offsetX = mouseX - selectedArea.x1;
-          const offsetY = mouseY - selectedArea.y1;
-          setSelectedArea(prevState => ({...prevState, offsetX, offsetY}));
-          setSelectedElements(newSelectedelements);
+          setSelectedElements(newSelectedElements);
           setAction("moving");
         }
         else{
@@ -186,7 +191,6 @@ function DrawingApp() {
       }
       const newElements = [element, ...selectedLayer.elements];
       setSelectedLayer( prevState => ({...prevState, elements: newElements}));
-      setSelectedElements([element]);
 
       setAction("drawing");
     }
@@ -220,30 +224,32 @@ function DrawingApp() {
       updateElement(id, x1, y1, mouseX, mouseY, tool, configs);
     }
     else if(action === "moving"){
-      if(selectedElements[0].type === "pencil"){
-        const newPoints = selectedElement.points.map((_, index) => {
-          return {
-            x: mouseX - selectedElement.xOffsets[index],
-            y: mouseY - selectedElement.yOffsets[index],
-          }
-        });
-        const newElements = selectedLayer.elements;
-        newElements[0].points = newPoints;
-        setSelectedLayer( prevState => ({...prevState, elements: newElements}));
-      }
-      else{
-        selectedElements.map(selected => {
+      selectedElements.map(selected => {
+        if(selected.type === "pencil"){
+          console.log(selected);
+          const newPoints = selected.points.map((_, index) => {
+            return {
+              x: mouseX - selected.xOffsets[index],
+              y: mouseY - selected.yOffsets[index],
+            }
+          });
+          const newElements = selectedLayer.elements;
+          const index = selectedLayer.elements.findIndex(element => element.id === selected.id);
+          newElements[index].points = newPoints;
+          setSelectedLayer( prevState => ({...prevState, elements: newElements}));
+        }
+        else{
           const { id, x1, y1, x2, y2, type, offsetX, offsetY, configs } = selected;
           const width = x2 - x1;
           const height = y2 - y1; 
           const newX1 = mouseX - offsetX;
           const newY1 = mouseY - offsetY;
           updateElement(id, newX1, newY1, newX1 + width, newY1 + height, type, configs);
-        });
-        if(tool === "select"){
-          setSelectedArea({});
-          document.getElementById("canvas").style.cursor = "move";
         }
+      });
+      if(tool === "select"){
+        setSelectedArea({});
+        document.getElementById("canvas").style.cursor = "move";
       }
     }
     else if(action === "resizing"){
@@ -273,10 +279,13 @@ function DrawingApp() {
       const newSelection = createSelection(x1, y1, x2, y2);
       setSelectedArea(newSelection);
       const newSelectedElements = selectElements(x1, y1, x2, y2, selectedLayer.elements);
+
       if(newSelectedElements.length > 0){
+
         const newSelectedArea = resizeSelection(newSelectedElements);
         setSelectedArea(newSelectedArea);
         setSelectedElements(newSelectedElements);
+        console.log(newSelectedElements);
       }
     }
     else if(action === "moving"){
