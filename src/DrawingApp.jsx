@@ -149,7 +149,7 @@ function DrawingApp() {
       }
       else{
         const element = getElementAtPosition(mouseX, mouseY, [selectedArea]);
-        if(element){
+        if(element && selectedElements.length > 0){
           const newSelectedelements = selectedElements.map(element => {
             const offsetX = mouseX - element.x1;
             const offsetY = mouseY - element.y1;
@@ -278,6 +278,10 @@ function DrawingApp() {
         setSelectedArea(newSelectedArea);
         setSelectedElements(newSelectedElements);
       }
+    }
+    else if(action === "moving"){
+      setSelectedArea({});
+      setSelectedElements([]);
     }
     setAction("none");
     console.log(layers);

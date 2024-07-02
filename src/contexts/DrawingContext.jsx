@@ -16,7 +16,7 @@ const DrawingProvider = ({children}) => {
 
     const [layerIndex, setLayerIndex] = useState(0);
     const [action, setAction] = useState("none");
-    const [tool, setTool] = useState("select");
+    const [tool, setTool] = useState("rectangle");
     const [selectedElement, setSelectedElement] = useState();
 
     return(

@@ -88,7 +88,7 @@ const DrawingFunctions = () => {
   }
 
   const positionWithinElement = (x, y, element) => {
-    
+
     const { type, x1, y1, x2, y2 } = element;
     
     switch(type){
@@ -194,15 +194,29 @@ const DrawingFunctions = () => {
 
   const selectElements = (x1, y1, x2, y2, elements) => {
     return elements.filter(element => {
-      if (
-        ((element.x1 >= x1 && element.x1 <= x2 && element.y1 >= y1 && element.y1 <= y2) ||
-        (element.x2 >= x1 && element.x2 <= x2 && element.y2 >= y1 && element.y2 <= y2)) 
-        || 
-        ((element.x2 >= x1 && element.x2 <= x2 && element.y1 >= y1 && element.y1 <= y2) ||
-        (element.x1 >= x1 && element.x1 <= x2 && element.y2 >= y1 && element.y2 <= y2))
-      )
-      return element;
-    })
+      switch(element.type){
+        case "rectangle":
+          if(
+            ((element.x1 >= x1 && element.x1 <= x2 && element.y1 >= y1 && element.y1 <= y2) ||
+            (element.x2 >= x1 && element.x2 <= x2 && element.y2 >= y1 && element.y2 <= y2)) 
+            || 
+            ((element.x2 >= x1 && element.x2 <= x2 && element.y1 >= y1 && element.y1 <= y2) ||
+            (element.x1 >= x1 && element.x1 <= x2 && element.y2 >= y1 && element.y2 <= y2))
+          )
+          return element;
+        case "line":
+          if(
+            ((element.x1 >= x1 && element.x1 <= x2 && element.y1 >= y1 && element.y1 <= y2) ||
+            (element.x2 >= x1 && element.x2 <= x2 && element.y2 >= y1 && element.y2 <= y2)) 
+          )
+          return element;
+          return;
+        case "pencil":
+          return;
+        default:
+          throw new Error (`type not recognized: ${element.type}`);
+      }
+    });
   }
 
   const resizeSelection = elements => {
@@ -213,8 +227,15 @@ const DrawingFunctions = () => {
     elements.map(({x1, y1, x2, y2}) => {
         minX = Math.min(minX, x1);
         maxX = Math.max(maxX, x2);
-        minY = Math.min(minY, y1);
-        maxY = Math.max(maxY, y2);
+        // condição porque a linha na diagonal direita para cima o y2 e y1 são ao contrário
+        if(y1 > y2){
+          minY = Math.min(minY, y2);
+          maxY = Math.max(maxY, y1);
+        }
+        else{
+          minY = Math.min(minY, y1);
+          maxY = Math.max(maxY, y2);
+        }
       }
     );
     const newSelectedArea = createSelection(minX, minY, maxX, maxY);
