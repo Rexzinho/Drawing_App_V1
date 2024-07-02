@@ -47,7 +47,7 @@ const DrawingLayers = () => {
     setLayers(newLayers);
 
     if(layerIndex === index)
-      setSelectedLayer(selectedLayer => ({...selectedLayer, hidden: !selectedLayer.hidden}));
+      setSelectedLayer(prevState => ({...prevState, hidden: !selectedLayer.hidden}));
   }
 
   const deleteLayer = (id) => {

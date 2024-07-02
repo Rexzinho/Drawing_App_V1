@@ -158,7 +158,7 @@ input[type="checkbox"]:hover{
     padding: 5px;
 }
 .tool img:hover{
-    background-color: #353535;
+    background-color: #35353598;
     border-radius: 5px;
 }
 .selectedTool{

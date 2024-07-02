@@ -36,14 +36,15 @@ const DrawingFunctions = () => {
   const updateElement = (id, x1, y1, x2, y2, tool, roughConfigs) => {
 
     const newElements = selectedLayer.elements;
-    
+    const index = selectedLayer.elements.findIndex(element => element.id === id);
+
     switch(tool){
       case "line":
       case "rectangle":
-        newElements[0] = createElement(id, x1, y1, x2, y2, tool, roughConfigs);
+        newElements[index] = createElement(id, x1, y1, x2, y2, tool, roughConfigs);
         break;
       case "pencil":
-        newElements[0].points = [...newElements[0].points, {x: x2, y: y2}];
+        newElements[index].points = [...newElements[index].points, {x: x2, y: y2}];
         break;
       default:
         throw new Error (`Tool not recognized: ${tool}`);
@@ -183,11 +184,44 @@ const DrawingFunctions = () => {
   }
 
   const createSelection = (x1, y1, x2, y2) => {
-    const roughElement = generator.rectangle(x1, y1, x2-x1, y2-y1, {stroke: "#00F0FF"}); 
-    return {x1, y1, x2, y2, roughElement}
+    const roughElement = generator.rectangle(x1, y1, x2-x1, y2-y1, {
+      stroke: "#00F0FF",
+      fill: "#00c3ff2a",
+      fillStyle: 'solid',
+    }); 
+    return {x1, y1, x2, y2, type: "rectangle", roughElement}
   }
 
-  return { createElement, updateElement, drawElement, getCanvasCoordinates, getElementAtPosition, adjustElementCoordinates, cursorForPosition, resizedCoordinates, createSelection}
+  const selectElements = (x1, y1, x2, y2, elements) => {
+    return elements.filter(element => {
+      if (
+        ((element.x1 >= x1 && element.x1 <= x2 && element.y1 >= y1 && element.y1 <= y2) ||
+        (element.x2 >= x1 && element.x2 <= x2 && element.y2 >= y1 && element.y2 <= y2)) 
+        || 
+        ((element.x2 >= x1 && element.x2 <= x2 && element.y1 >= y1 && element.y1 <= y2) ||
+        (element.x1 >= x1 && element.x1 <= x2 && element.y2 >= y1 && element.y2 <= y2))
+      )
+      return element;
+    })
+  }
+
+  const resizeSelection = elements => {
+    let minX = elements[0].x1;
+    let maxX = elements[0].x2;
+    let minY = elements[0].y1;
+    let maxY = elements[0].y2;
+    elements.map(({x1, y1, x2, y2}) => {
+        minX = Math.min(minX, x1);
+        maxX = Math.max(maxX, x2);
+        minY = Math.min(minY, y1);
+        maxY = Math.max(maxY, y2);
+      }
+    );
+    const newSelectedArea = createSelection(minX, minY, maxX, maxY);
+    return newSelectedArea;
+  }
+
+  return { createElement, updateElement, drawElement, getCanvasCoordinates, getElementAtPosition, adjustElementCoordinates, cursorForPosition, resizedCoordinates, createSelection, selectElements, resizeSelection }
 }
 
 export default DrawingFunctions;
