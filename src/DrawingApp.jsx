@@ -18,7 +18,6 @@ function DrawingApp() {
     layerIndex, setLayerIndex,
     action, setAction,
     tool, setTool,
-    selectedElement, setSelectedElement,
 
   } = useContext(DrawingContext);
 
@@ -43,7 +42,8 @@ function DrawingApp() {
     drawElement,
     createSelection,
     selectElements,
-    resizeSelection
+    resizeSelection,
+    adjustSelectedLayer
   
   } = DrawingFunctions();
 
@@ -150,7 +150,6 @@ function DrawingApp() {
       else{
         const element = getElementAtPosition(mouseX, mouseY, [selectedArea]);
         if(element && selectedElements.length > 0){
-          console.log(selectedElements);
           const newSelectedElements = selectedElements.map(element => {
             if(element.type === "pencil"){
               const xOffsets = element.points.map(point => mouseX - point.x);
@@ -226,7 +225,6 @@ function DrawingApp() {
     else if(action === "moving"){
       selectedElements.map(selected => {
         if(selected.type === "pencil"){
-          console.log(selected);
           const newPoints = selected.points.map((_, index) => {
             return {
               x: mouseX - selected.xOffsets[index],
@@ -285,7 +283,8 @@ function DrawingApp() {
         const newSelectedArea = resizeSelection(newSelectedElements);
         setSelectedArea(newSelectedArea);
         setSelectedElements(newSelectedElements);
-        console.log(newSelectedElements);
+        // empurrar os elementos selecionados para a frente
+        adjustSelectedLayer(newSelectedElements, selectedLayer.elements);
       }
     }
     else if(action === "moving"){
@@ -293,7 +292,7 @@ function DrawingApp() {
       setSelectedElements([]);
     }
     setAction("none");
-    console.log(layers);
+    //console.log(layers);
   }
   
   return (

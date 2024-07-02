@@ -244,7 +244,7 @@ const DrawingFunctions = () => {
           maxX = Math.max(maxX, element.x2);
           if(element.y1 > element.y2){
             minY = Math.min(minY, element.y2);
-            maxY = Math.max(maxY, y1);
+            maxY = Math.max(maxY, element.y1);
           }
           else{
             minY = Math.min(minY, element.y1);
@@ -253,12 +253,17 @@ const DrawingFunctions = () => {
         }
       }
     );
-    console.log(minX, minY, maxX, maxY);
     const newSelectedArea = createSelection(minX, minY, maxX, maxY);
     return newSelectedArea;
   }
 
-  return { createElement, updateElement, drawElement, getCanvasCoordinates, getElementAtPosition, adjustElementCoordinates, cursorForPosition, resizedCoordinates, createSelection, selectElements, resizeSelection }
+  const adjustSelectedLayer = (selectedElements, elements) => {
+    let newElements = elements.filter(element => !selectedElements.includes(element));
+    newElements = [...selectedElements, ...newElements];
+    setSelectedLayer(prevState => ({...prevState, elements: newElements}));
+  }
+
+  return { createElement, updateElement, drawElement, getCanvasCoordinates, getElementAtPosition, adjustElementCoordinates, cursorForPosition, resizedCoordinates, createSelection, selectElements, resizeSelection, adjustSelectedLayer }
 }
 
 export default DrawingFunctions;

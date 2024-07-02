@@ -28,7 +28,6 @@ const DrawingProvider = ({children}) => {
                 layerIndex, setLayerIndex,
                 action, setAction,
                 tool, setTool,
-                selectedElement, setSelectedElement,
             }}
         >
             {children}
