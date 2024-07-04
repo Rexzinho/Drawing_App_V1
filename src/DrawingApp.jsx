@@ -2,7 +2,7 @@ import { useLayoutEffect, useEffect, useContext, useState } from 'react';
 import { DrawingContext } from './contexts/DrawingContext';
 import rough from 'roughjs/bundled/rough.esm';
 
-import logos from "./assets/index";
+import icons from "./assets/index";
 
 import "./App.css";
 
@@ -47,6 +47,11 @@ function DrawingApp() {
   
   } = DrawingFunctions();
 
+  const [history, setHistory] = useState([{
+    layers: [{}],
+    selectedLayer: {},
+    layerIndex: 0,
+  }]);
   const [isFilled, setIsFilled] = useState(false);
   const [toolConfigs, setToolConfigs] = useState({
     stroke: "#FFFFFF",
@@ -211,7 +216,7 @@ function DrawingApp() {
       if(element)
         document.getElementById("canvas").style.cursor = cursorForPosition(element.position);
     }
-    if(tool === "select" && selectedArea.x1){
+    if(tool === "select" && selectedArea.x1 && selectedElements.length > 0){
       const element = getElementAtPosition(mouseX, mouseY, [selectedArea]);
       if(element)
         document.getElementById("canvas").style.cursor = "move";
@@ -286,13 +291,33 @@ function DrawingApp() {
         // empurrar os elementos selecionados para a frente
         adjustSelectedLayer(newSelectedElements, selectedLayer.elements);
       }
+      else{
+        setSelectedArea({});
+      }
     }
     else if(action === "moving"){
       setSelectedArea({});
       setSelectedElements([]);
     }
     setAction("none");
-    //console.log(layers);
+
+    const newHistory = {
+      layers,
+      selectedLayer,
+      layerIndex
+    }
+    const latestHistory = history[history.length-1];
+    if(JSON.stringify(latestHistory.layers) !== JSON.stringify(newHistory.layers)){
+      setHistory(history => [...history, newHistory]);
+    }
+  }
+
+  const undo = () => {
+    if(history.length <= 2) return;
+  }
+
+  const redo = () => {
+
   }
   
   return (
@@ -304,7 +329,7 @@ function DrawingApp() {
             : "draw-button tool"} 
           onClick={() => setTool("rectangle")}
         >
-          <img src={logos.Square} alt="Square"/>
+          <img src={icons.Square} alt="Square"/>
         </button>
         <button 
             className={tool === "line"
@@ -312,7 +337,7 @@ function DrawingApp() {
               : "draw-button tool"} 
           onClick={() => setTool("line")}
         >
-          <img src={logos.Line} alt="Line"/>
+          <img src={icons.Line} alt="Line"/>
         </button>
         <button 
             className={tool === "selection"
@@ -320,7 +345,7 @@ function DrawingApp() {
               : "draw-button tool"} 
           onClick={() => setTool("selection")}
         >
-          <img src={logos.Selection} alt="Selection"/>
+          <img src={icons.Selection} alt="Selection"/>
         </button>
         <button 
             className={tool === "select"
@@ -328,7 +353,7 @@ function DrawingApp() {
               : "draw-button tool"} 
           onClick={() => setTool("select")}
         >
-          <img src={logos.Select} alt="Select"/>
+          <img src={icons.Select} alt="Select"/>
         </button>
         <button 
             className={tool === "pencil"
@@ -336,7 +361,7 @@ function DrawingApp() {
               : "draw-button tool"} 
           onClick={() => setTool("pencil")}
         >
-          <img src={logos.Brush} alt="Pencil"/>
+          <img src={icons.Brush} alt="Pencil"/>
         </button>
         <label htmlFor="stroke">Color</label>
         <input 
@@ -370,6 +395,12 @@ function DrawingApp() {
             onChange={(e) => {setToolConfigs({...toolConfigs, fill: e.target.value})}}
           />
         }
+        <button className="draw-button" onClick={undo} style={{scale: "0.8"}}>
+          <img src={icons.Undo} alt="Undo" />
+        </button>
+        <button className="draw-button" onClick={redo} style={{scale: "0.8"}}>
+          <img src={icons.Redo} alt="Redo" />
+        </button>
       </div>
       <div className="canvas-container">
         <div className="layers-container">
@@ -390,7 +421,7 @@ function DrawingApp() {
                   >
                     <img 
                       className={layer.hidden && "hidden"} 
-                      src={logos.View}
+                      src={icons.View}
                       style={{width: "7px"}}
                       />
                   </button>
@@ -399,16 +430,16 @@ function DrawingApp() {
             </div>
             <div className="layer-buttons" key={selectedLayer.id}>
               <button onClick={createLayer} className="draw-button">
-                <img src={logos.Layer} alt="CreateLayer" />
+                <img src={icons.Layer} alt="CreateLayer" />
               </button>
               <button onClick={() => deleteLayer(selectedLayer.id)} className="draw-button">
-                <img src={logos.Trash} alt="DeleteLayer" />
+                <img src={icons.Trash} alt="DeleteLayer" />
               </button>
               <button onClick={() => upLayer(selectedLayer.id)} className="draw-button">
-                <img src={logos.Arrow} alt="DeleteLayer" />
+                <img src={icons.Arrow} alt="DeleteLayer" />
               </button>
               <button onClick={() => downLayer(selectedLayer.id)} className="draw-button">
-                <img src={logos.Arrow} alt="DeleteLayer" style={{transform: "rotate(180deg)"}}/>
+                <img src={icons.Arrow} alt="DeleteLayer" style={{transform: "rotate(180deg)"}}/>
               </button>
             </div>
           </div>

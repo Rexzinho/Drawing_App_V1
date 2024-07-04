@@ -108,7 +108,7 @@ const DrawingFunctions = () => {
         const betweenAnyPoint = element.points.some((point, index) => {
           const nextPoint = element.points[index + 1];
           if(!nextPoint) return false;
-          return onLine(point.x, point.y, nextPoint.x, nextPoint.y, x, y, 5) !== null;
+          return onLine(point.x, point.y, nextPoint.x, nextPoint.y, x, y, element.configs.size) !== null;
         });
         return betweenAnyPoint ? "inside" : null;
       default:
@@ -237,7 +237,7 @@ const DrawingFunctions = () => {
             maxX = Math.max(maxX, x);
             minY = Math.min(minY, y);
             maxY = Math.max(maxY, y);
-          })
+          });
         }
         else{
           minX = Math.min(minX, element.x1);

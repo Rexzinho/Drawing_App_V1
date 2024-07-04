@@ -7,8 +7,10 @@ import Trash from './Trash.svg';
 import View from './View.svg';
 import Brush from './Brush.svg';
 import Select from './Select.svg';
+import Undo from './Undo.svg';
+import Redo from './Redo.svg';
 
-const logos = {
+const icons = {
     Arrow,
     Layer,
     Line,
@@ -17,7 +19,9 @@ const logos = {
     Trash,
     View,
     Brush,
-    Select
+    Select,
+    Undo,
+    Redo,
 }
 
-export default logos;
+export default icons;
