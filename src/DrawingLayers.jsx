@@ -1,6 +1,7 @@
-import { useContext } from 'react';
-
+import { useContext, useEffect } from 'react';
 import { DrawingContext } from './contexts/DrawingContext';
+
+import DrawingHistory from './DrawingHistory';
 
 const DrawingLayers = () => {
   
@@ -11,6 +12,8 @@ const DrawingLayers = () => {
     layerIndex, setLayerIndex,
 
   } = useContext(DrawingContext);
+
+  const { updateHistory } = DrawingHistory();
 
   const createLayer = () => {
 
@@ -24,8 +27,12 @@ const DrawingLayers = () => {
       elements: [],
       hidden: false
     }
+    
     setSelectedLayer(newLayer);
-    setLayers([newLayer, ...layers]);
+    const newLayers = [newLayer, ...layers]
+    setLayers(newLayers);
+
+    updater(newLayers, newLayer, 0);
   }
 
   const selectLayer = (id) => {
@@ -34,20 +41,27 @@ const DrawingLayers = () => {
       if(layer.id === id){
         setSelectedLayer(layers[index]);
         setLayerIndex(index);
+        return;
       }
     });
+
   }
 
   const hideLayer = (index) => {
 
-    console.log(index);
     const newLayer = {...layers[index], hidden: !layers[index].hidden}
     const newLayers = [...layers];
     newLayers[index] = newLayer;
     setLayers(newLayers);
 
-    if(layerIndex === index)
-      setSelectedLayer(prevState => ({...prevState, hidden: !selectedLayer.hidden}));
+    if(layerIndex === index){
+      const newSelectedLayer = {...selectedLayer, hidden: !selectedLayer.hidden};
+      setSelectedLayer(newSelectedLayer);
+      updater(newLayers, newSelectedLayer, layerIndex);
+      return;
+    }
+
+    updater(newLayers, selectedLayer, layerIndex);
   }
 
   const deleteLayer = (id) => {
@@ -62,6 +76,8 @@ const DrawingLayers = () => {
     const newSelectedLayer = newLayers[newIndex];
     setSelectedLayer(newSelectedLayer);
     setLayerIndex(newIndex);
+
+    updater(newLayers, newSelectedLayer, newIndex);
   }
 
   const upLayer = (id) => {
@@ -74,6 +90,8 @@ const DrawingLayers = () => {
 
     setLayers(newLayers);
     setLayerIndex(layerIndex - 1);
+
+    updater(newLayers, selectedLayer, layerIndex - 1);
   }
 
   const downLayer = (id) => {
@@ -86,6 +104,17 @@ const DrawingLayers = () => {
 
     setLayers(newLayers);
     setLayerIndex(layerIndex + 1);
+
+    updater(newLayers, selectedLayer, layerIndex + 1);
+  }
+
+  const updater = (newLayers, newSelectedLayer, newLayerIndex) => {
+    const newHistory = {
+      layers: newLayers,
+      selectedLayer: newSelectedLayer,
+      layerIndex: newLayerIndex
+    }
+    updateHistory(newHistory);
   }
 
   return { createLayer, selectLayer, hideLayer, deleteLayer, upLayer, downLayer }

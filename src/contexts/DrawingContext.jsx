@@ -18,6 +18,24 @@ const DrawingProvider = ({children}) => {
     const [action, setAction] = useState("none");
     const [tool, setTool] = useState("pencil");
 
+    const [history, setHistory] = useState([{
+        layers: [{
+          name: `Layer-${layersQty}`,
+          id: layersQty,
+          elements: [],
+          hidden: false
+        }],
+        selectedLayer: {
+          name: `Layer-${layersQty}`,
+          id: layersQty,
+          elements: [],
+          hidden: false
+        },
+        layerIndex: 0,
+    }]);
+
+    const [historyIndex, setHistoryIndex] = useState(0);
+
     return(
         <DrawingContext.Provider
             value = {{
@@ -27,6 +45,8 @@ const DrawingProvider = ({children}) => {
                 layerIndex, setLayerIndex,
                 action, setAction,
                 tool, setTool,
+                history, setHistory,
+                historyIndex, setHistoryIndex
             }}
         >
             {children}

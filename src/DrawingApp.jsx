@@ -8,6 +8,7 @@ import "./App.css";
 
 import DrawingLayers from './DrawingLayers';
 import DrawingFunctions from './DrawingFunctions';
+import DrawingHistory from './DrawingHistory';
 
 function DrawingApp() {
 
@@ -47,11 +48,8 @@ function DrawingApp() {
   
   } = DrawingFunctions();
 
-  const [history, setHistory] = useState([{
-    layers: [{}],
-    selectedLayer: {},
-    layerIndex: 0,
-  }]);
+  const { updateHistory, undo, redo } = DrawingHistory();
+
   const [isFilled, setIsFilled] = useState(false);
   const [toolConfigs, setToolConfigs] = useState({
     stroke: "#FFFFFF",
@@ -106,8 +104,8 @@ function DrawingApp() {
         document.getElementById(`layer-${layer.id}`).classList.add("hiddenLayer");
       else
       document.getElementById(`layer-${layer.id}`).classList.remove("hiddenLayer");
-    })
-
+    });
+    
   }, [layers]);
 
   const handleMouseDown = (event) => {
@@ -299,25 +297,13 @@ function DrawingApp() {
       setSelectedArea({});
       setSelectedElements([]);
     }
-    setAction("none");
-
     const newHistory = {
       layers,
       selectedLayer,
       layerIndex
-    }
-    const latestHistory = history[history.length-1];
-    if(JSON.stringify(latestHistory.layers) !== JSON.stringify(newHistory.layers)){
-      setHistory(history => [...history, newHistory]);
-    }
-  }
-
-  const undo = () => {
-    if(history.length <= 2) return;
-  }
-
-  const redo = () => {
-
+    };
+    setAction("none");
+    updateHistory(newHistory);
   }
   
   return (
@@ -429,7 +415,10 @@ function DrawingApp() {
               ))}
             </div>
             <div className="layer-buttons" key={selectedLayer.id}>
-              <button onClick={createLayer} className="draw-button">
+              <button 
+                onClick={createLayer} 
+                className="draw-button"
+              >
                 <img src={icons.Layer} alt="CreateLayer" />
               </button>
               <button onClick={() => deleteLayer(selectedLayer.id)} className="draw-button">
