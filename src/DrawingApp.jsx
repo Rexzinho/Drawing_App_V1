@@ -9,6 +9,7 @@ import "./App.css";
 import DrawingLayers from './DrawingLayers';
 import DrawingFunctions from './DrawingFunctions';
 import DrawingHistory from './DrawingHistory';
+import TextModal from './components/TextModal';
 
 function DrawingApp() {
 
@@ -16,9 +17,13 @@ function DrawingApp() {
     layers, setLayers,
     layersQty, setLayersQty,
     selectedLayer, setSelectedLayer,
+    selectedElements, setSelectedElements,
     layerIndex, setLayerIndex,
     action, setAction,
     tool, setTool,
+    history, historyIndex,
+    textConfigs, setTextConfigs,
+    textModal, setTextModal,
 
   } = useContext(DrawingContext);
 
@@ -59,7 +64,6 @@ function DrawingApp() {
   });
 
   const [selectedArea, setSelectedArea] = useState({});
-  const [selectedElements, setSelectedElements] = useState([]);
 
   // atualizar layers quando a selectedLayer é alterada
   useEffect(() => {
@@ -175,26 +179,29 @@ function DrawingApp() {
         }
       }  
     }
-    else if(["pencil", "rectangle", "line"].includes(tool)){
+    else if(["pencil", "rectangle", "line", "text"].includes(tool)){
       const id = selectedLayer.elements.length;
-      let element;
+      let configs;
       if(tool === "pencil"){
-        const configs = {
+        configs = {
           size: toolConfigs.strokeWidth * 4, 
           color: toolConfigs.stroke
         };
-        element = createElement(id, mouseX, mouseY, mouseX, mouseY, tool, configs);
+      }
+      else if(tool === "text"){
+        setTextModal(true);
+        configs = {...textConfigs};
       }
       else{
-        const configs = isFilled 
+        configs = isFilled 
         ? {...toolConfigs} 
         : {...toolConfigs, fill: "rgba(0, 0, 0, 0)"};
-        element = createElement(id, mouseX, mouseY, mouseX, mouseY, tool, configs);
       }
+      const element = createElement(id, mouseX, mouseY, mouseX, mouseY, tool, configs);
       const newElements = [element, ...selectedLayer.elements];
       setSelectedLayer( prevState => ({...prevState, elements: newElements}));
-
-      setAction("drawing");
+      setSelectedElements([{...element}]);
+      setAction(tool === "text" ? "writing" : "drawing");
     }
   }
 
@@ -266,6 +273,7 @@ function DrawingApp() {
   }
 
   const handleMouseUp = () => {
+    if(action === "writing") return;
 
     if(action === "drawing" || action === "resizing"){
       const index = 0;
@@ -304,10 +312,12 @@ function DrawingApp() {
     };
     setAction("none");
     updateHistory(newHistory);
+    console.log(layers);
   }
   
   return (
     <div className="drawing-app">
+      {textModal && <TextModal/>}
       <div className="tools-container">
         <button 
           className={tool === "rectangle"
@@ -318,7 +328,7 @@ function DrawingApp() {
           <img src={icons.Square} alt="Square"/>
         </button>
         <button 
-            className={tool === "line"
+          className={tool === "line"
               ? "draw-button tool selectedTool" 
               : "draw-button tool"} 
           onClick={() => setTool("line")}
@@ -326,12 +336,28 @@ function DrawingApp() {
           <img src={icons.Line} alt="Line"/>
         </button>
         <button 
+          className={tool === "pencil"
+            ? "draw-button tool selectedTool" 
+            : "draw-button tool"} 
+          onClick={() => setTool("pencil")}
+        >
+          <img src={icons.Brush} alt="Pencil"/>
+        </button>
+        <button
+          className={tool === "text"
+            ? "draw-button tool selectedTool" 
+            : "draw-button tool"} 
+          onClick={() => setTool("text")}
+        >  
+          <img src={icons.Text} alt="Pencil"/>
+        </button>
+        <button 
             className={tool === "selection"
               ? "draw-button tool selectedTool" 
               : "draw-button tool"} 
           onClick={() => setTool("selection")}
         >
-          <img src={icons.Selection} alt="Selection"/>
+          <img src={icons.Cursor} alt="Selection"/>
         </button>
         <button 
             className={tool === "select"
@@ -340,14 +366,6 @@ function DrawingApp() {
           onClick={() => setTool("select")}
         >
           <img src={icons.Select} alt="Select"/>
-        </button>
-        <button 
-            className={tool === "pencil"
-              ? "draw-button tool selectedTool" 
-              : "draw-button tool"} 
-          onClick={() => setTool("pencil")}
-        >
-          <img src={icons.Brush} alt="Pencil"/>
         </button>
         <label htmlFor="stroke">Color</label>
         <input 
@@ -381,10 +399,18 @@ function DrawingApp() {
             onChange={(e) => {setToolConfigs({...toolConfigs, fill: e.target.value})}}
           />
         }
-        <button className="draw-button" onClick={undo} style={{scale: "0.8"}}>
+        <button 
+          className={historyIndex === 0 ? "draw-button unable" : "draw-button"}
+          onClick={undo} 
+          style={{scale: "0.8"}}
+        >
           <img src={icons.Undo} alt="Undo" />
         </button>
-        <button className="draw-button" onClick={redo} style={{scale: "0.8"}}>
+        <button 
+          className={historyIndex === history.length-1 ? "draw-button unable" : "draw-button"}
+          onClick={redo} 
+          style={{scale: "0.8"}}
+        >
           <img src={icons.Redo} alt="Redo" />
         </button>
       </div>
@@ -446,5 +472,13 @@ function DrawingApp() {
     </div>
   )
 }
+
+export const canvasContext = () => {
+  return {
+    canvas: document.getElementById("canvas"),
+    context: canvas.getContext("2d")
+  }
+}
+
 
 export default DrawingApp;

@@ -1,0 +1,157 @@
+/* TEXT */
+@font-face {
+    font-family: "Grandstander";
+    src: url("./assets/fonts/Grandstander-VariableFont_wght.ttf");
+}
+
+@font-face {
+    font-family: "Inter";
+    src: url("./assets/fonts/Inter-VariableFont_slnt\,wght.ttf");
+}
+
+.font-inter{
+    font-family: "Inter", sans-serif;
+}
+.font-grand{
+    font-family: "Grandstander", sans-serif;
+}
+.font-bold{
+    font-weight: bold;
+}
+.text-gray1{
+    color:#121212;
+}
+.text-cyan{
+    color: #00F0FF;
+}
+.text-cyan:hover{
+    color:#00F0FF;
+}
+.text-cyan:active{
+    color:#00F0FF;
+}
+
+/* BUTTONS */
+
+.btn-cyan{
+    height:32px;
+    text-decoration: none;
+    background-color: #00F0FF;
+    color: #121212;;
+    border-radius: 5px;
+    border: 1px solid #00F0FF;
+    padding:3px 12px;
+    transition: 0.3s;
+}
+.btn-outline-cyan{
+    height:32px;
+    text-decoration: none;
+    background-color: transparent;
+    color: #00F0FF;
+    border-radius: 5px;
+    border: 1px solid #00F0FF;
+    padding:3px 12px;
+    transition: 0.3s;
+}
+.btn-cyan:hover{
+    transform: translateY(-3px);
+    cursor: pointer;
+}
+.btn-outline-cyan:hover{
+    transform: translateY(-3px);
+    cursor: pointer;
+}
+
+/* FORM */
+
+.my-form{
+    max-width:600px;
+    width:95%;
+    margin:auto;
+}
+.form-item{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+.form-item input{
+    padding:8px 12px;
+    margin-top: 3px;
+    border: 1px solid gray;
+    border-radius: 10px;
+}
+
+/* COMPONENT */
+
+.component{
+    display:flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    transition: 0.3s;
+    height:100%;
+    text-align: center;
+}
+.component:hover{
+    transform: translateY(-6px);
+    cursor:pointer;
+}
+
+/* OTHERS */
+
+#navbar-logo{
+    font-size: 1.8em;
+    margin:0;
+    transition: 0.2s;
+}
+#navbar-logo:hover{
+    transform: scale(1.08);
+}
+.pages-link{
+    transition:0.3s;
+}
+.pages-link:hover{
+    transform: translateY(-3px);
+}
+.bg-gray1{
+    background-color: #121212;
+}
+.bg-gray2{
+    background-color: #1E1E1E;
+}
+#menu-icon{
+    filter: invert(100%);
+}
+.mt-nav{
+    margin-top:120px;
+}
+.tool-card{
+    transition: 0.3s;
+}
+.tool-card:hover{
+    transform: translateY(-8px);
+    box-shadow: 0px 5px 5px #0000007c;
+}
+.tuor-img{
+    transition:0.3s;
+}
+.tuor-img:hover{
+    transform: translateY(-8px);
+    box-shadow: 0px 0px 15px #00eeff52;
+}
+.chat-img{
+    transition:0.3s;
+}
+.chat-img:hover{
+    transform: translateY(-8px);
+    box-shadow: 0px 0px 15px #00eeff52;
+}
+.chat-row{
+    transform: translateY(-150px);
+}
+.space-bottom{
+    padding-bottom:200px;
+}
+.py-big{
+    padding:200px;
+}

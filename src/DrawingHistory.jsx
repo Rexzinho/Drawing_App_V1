@@ -19,8 +19,7 @@ const DrawingHistory = () => {
 
         if(historyIndex !== history.length-1){
             const historySliced = [...history].slice(0, historyIndex + 1);
-            const newHistory2 = [...historySliced, newHistory];
-            setHistory(newHistory2);
+            setHistory([...historySliced, newHistory]);
             setHistoryIndex(index => index + 1);
             return;
         }

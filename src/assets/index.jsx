@@ -9,6 +9,8 @@ import Brush from './Brush.svg';
 import Select from './Select.svg';
 import Undo from './Undo.svg';
 import Redo from './Redo.svg';
+import Text from './Text.svg';
+import Cursor from './Cursor.svg';
 
 const icons = {
     Arrow,
@@ -22,6 +24,8 @@ const icons = {
     Select,
     Undo,
     Redo,
+    Text,
+    Cursor
 }
 
 export default icons;

@@ -7,6 +7,8 @@ const generator = rough.generator();
 import { getSvgPathFromStroke } from './DrawingFreeHand';
 import getStroke from 'perfect-freehand';
 
+import { canvasContext } from "./DrawingApp";
+
 const DrawingFunctions = () => {
 
   const { selectedLayer, setSelectedLayer} = useContext(DrawingContext);
@@ -25,6 +27,8 @@ const DrawingFunctions = () => {
         return { id, x1, y1, x2, y2, type: tool, roughElement, configs};
       case "pencil":
         return {id, type: tool, points: [{x: x1, y: y1}], configs};
+      case "text":
+        return {id, type: tool, x1, y1, x2, y2, configs}
       default:
         throw new Error(`Tool not recognised: ${tool}`);
     }
@@ -33,7 +37,7 @@ const DrawingFunctions = () => {
     // elemento usando roughCanvas.draw(roughElement)
   }
   
-  const updateElement = (id, x1, y1, x2, y2, tool, roughConfigs) => {
+  const updateElement = (id, x1, y1, x2, y2, tool, configs) => {
 
     const newElements = selectedLayer.elements;
     const index = selectedLayer.elements.findIndex(element => element.id === id);
@@ -41,10 +45,17 @@ const DrawingFunctions = () => {
     switch(tool){
       case "line":
       case "rectangle":
-        newElements[index] = createElement(id, x1, y1, x2, y2, tool, roughConfigs);
+        newElements[index] = createElement(id, x1, y1, x2, y2, tool, configs);
         break;
       case "pencil":
         newElements[index].points = [...newElements[index].points, {x: x2, y: y2}];
+        break;
+      case "text":
+        const { canvas } = canvasContext();
+        const textWidth = canvas.getContext("2d").measureText(configs.text).width;
+        newElements[index].x2 = newElements[index].x1 + textWidth;
+        newElements[index].y2 = newElements[index].y1 + Number(configs.fontSize);
+        newElements[index].configs = configs;
         break;
       default:
         throw new Error (`Tool not recognized: ${tool}`);
@@ -63,6 +74,13 @@ const DrawingFunctions = () => {
         const stroke = getSvgPathFromStroke(getStroke(element.points, element.configs));
         context.fillStyle = element.configs.color;
         context.fill(new Path2D(stroke));
+        break;
+      case "text":
+        const {text, fontSize, font, fillStyle} = element.configs;
+        context.textBaseline = "top"
+        context.font = fontSize + "px " + font;
+        context.fillStyle = fillStyle;
+        context.fillText(text, element.x1, element.y1);
         break;
       default:
         throw new Error(`Type not recognized: ${element.type}`);
@@ -110,6 +128,8 @@ const DrawingFunctions = () => {
           if(!nextPoint) return false;
           return onLine(point.x, point.y, nextPoint.x, nextPoint.y, x, y, element.configs.size) !== null;
         });
+        case "text":
+        return x >= x1 && x <= x2 && y >= y1 && y <= y2 ? "inside" : null;
         return betweenAnyPoint ? "inside" : null;
       default:
         throw new Error(`Type not recognized: ${type}`);
@@ -180,8 +200,9 @@ const DrawingFunctions = () => {
       default:
         return null;
     }
-
   }
+
+  
 
   const createSelection = (x1, y1, x2, y2) => {
     const roughElement = generator.rectangle(x1, y1, x2-x1, y2-y1, {
@@ -226,10 +247,10 @@ const DrawingFunctions = () => {
 
   const resizeSelection = elements => {
     const first = elements[0]
-    let minX = first.x1 ? first.x1 : first.points[0].x;
-    let maxX = first.x2 ? first.x2 : first.points[0].x;
-    let minY = first.y1 ? first.y1 : first.points[0].y;
-    let maxY = first.y2 ? first.y2 : first.points[0].y;
+    let minX = first.x1 || first.points[0].x;
+    let maxX = first.x2 || first.points[0].x;
+    let minY = first.y1 || first.points[0].y;
+    let maxY = first.y2 || first.points[0].y;
     elements.map((element) => {
         if(element.type === "pencil"){
           element.points.map(({x, y}) => {

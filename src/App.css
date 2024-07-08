@@ -156,6 +156,8 @@ input[type="checkbox"]:hover{
 }
 .tool img{
     padding: 5px;
+    width: 17px;
+    height: 17px;
 }
 .tool img:hover{
     background-color: #35353598;
@@ -168,6 +170,9 @@ input[type="checkbox"]:hover{
     filter: invert(100%);
     background-color: rgb(255, 0, 0) !important;
     border-radius: 5px;
+}
+.unable{
+    opacity: 60%;
 }
 
 /* other */

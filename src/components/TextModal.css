@@ -1,0 +1,45 @@
+*{
+    font-family: Inter;
+    font-size: 12px;
+    color: white;
+}
+.overlay{
+    display: flex;
+    justify-content: center;
+    margin: auto;
+    width: 100dvw;
+    height: 100dvh;
+    background-color: rgba(0, 0, 0, 0.295);
+    position: fixed;
+    z-index: 100;
+}
+.modal{
+    padding: 20px;
+    width: 300px;
+    height: fit-content;
+    margin: 100px;
+    background-color: rgb(0, 0, 0);
+    border-radius: 15px;
+}
+.modal input[type=color]{
+	display: block;
+	width: 20px;
+	height: 20px;
+	border: none;
+    background-color: rgba(255, 255, 255, 0.041);
+}
+.modal input[type=color]:hover{
+	cursor: pointer;
+}
+.modal input[type="color"]::-webkit-color-swatch-wrapper {
+    border-radius: 2px;
+    padding: 0;
+    border-radius: 0;
+ }
+.modal input[type="color"]::-webkit-color-swatch {
+    border: none;
+}
+.form-color{
+    padding-top: 10px;
+    padding-bottom: 20px;
+}

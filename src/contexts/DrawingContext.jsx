@@ -15,8 +15,9 @@ const DrawingProvider = ({children}) => {
     });
 
     const [layerIndex, setLayerIndex] = useState(0);
+    const [selectedElements, setSelectedElements] = useState([]);
     const [action, setAction] = useState("none");
-    const [tool, setTool] = useState("pencil");
+    const [tool, setTool] = useState("text");
 
     const [history, setHistory] = useState([{
         layers: [{
@@ -36,6 +37,15 @@ const DrawingProvider = ({children}) => {
 
     const [historyIndex, setHistoryIndex] = useState(0);
 
+    const [textConfigs, setTextConfigs] = useState({
+        text: "",
+        font: "sans-serif",
+        fontSize: 24,
+        fillStyle: "#FFFFFF",
+    });
+
+    const [textModal, setTextModal] = useState(false);
+
     return(
         <DrawingContext.Provider
             value = {{
@@ -46,7 +56,10 @@ const DrawingProvider = ({children}) => {
                 action, setAction,
                 tool, setTool,
                 history, setHistory,
-                historyIndex, setHistoryIndex
+                historyIndex, setHistoryIndex,
+                textConfigs, setTextConfigs,
+                textModal, setTextModal,
+                selectedElements, setSelectedElements
             }}
         >
             {children}
