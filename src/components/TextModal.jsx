@@ -2,23 +2,25 @@ import { useContext, useEffect } from "react";
 import { DrawingContext } from "../contexts/DrawingContext";
 
 import DrawingFunctions from "../DrawingFunctions";
+import DrawingHistory from "../DrawingHistory";
 
 import "./TextModal.css";
 
 const TextModal = () => {
 
     const { updateElement } = DrawingFunctions();
+    const { updateHistory } = DrawingHistory();
     const { 
         textConfigs, setTextConfigs, 
         textModal, setTextModal, 
         selectedElements, setSelectedElements,
-        tool, selectedLayer
+        setSelectedLayer, selectedLayer, layers, layerIndex
     } = useContext(DrawingContext);
 
     useEffect(() => {
         updateText();
     }, [textConfigs]);
-    
+
     const handleText = (e) => {
         setTextConfigs(configs => ({...configs, text: e.target.value}));
     }
@@ -36,12 +38,13 @@ const TextModal = () => {
         setTextModal(false);
         setTextConfigs(textConfigs => ({...textConfigs, text: ""}));
         setSelectedElements([]);
+        updateHistory({layers, selectedLayer, layerIndex});
     }
 
     const updateText = () => {
         const { id, x1, y1, x2, y2 } = selectedLayer.elements[0];
         const configs = {...textConfigs};
-        updateElement(id, x1, y1, x2, y2, tool, configs);
+        updateElement(id, x1, y1, x2, y2, "text", configs);
     }
 
     return(
@@ -50,7 +53,7 @@ const TextModal = () => {
                 <form className="my-form">
                     <div className="form-item">
                         <label htmlFor="text">Texto: </label>
-                        <input type="text" id="text" className="bg-gray1" onChange={(e) => handleText(e)}/>
+                        <input type="text" id="text" className="bg-gray1" onChange={(e) => handleText(e)} value={textConfigs.text}/>
                     </div>
                     <div className="form-item">
                         <label htmlFor="fontSize">Tamanho: </label>
@@ -63,7 +66,6 @@ const TextModal = () => {
                 </form>
                 <div className="buttons">
                     <button className="btn-cyan" onClick={saveText}>Salvar</button>
-                    <button className="btn-outline-cyan">Cancelar</button>
                 </div>
             </div>
         </div>

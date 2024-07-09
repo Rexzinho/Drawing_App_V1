@@ -39,7 +39,7 @@ const DrawingProvider = ({children}) => {
 
     const [textConfigs, setTextConfigs] = useState({
         text: "",
-        font: "sans-serif",
+        font: "Comic Sans MS",
         fontSize: 24,
         fillStyle: "#FFFFFF",
     });

@@ -11,7 +11,7 @@ import { canvasContext } from "./DrawingApp";
 
 const DrawingFunctions = () => {
 
-  const { selectedLayer, setSelectedLayer} = useContext(DrawingContext);
+  const { selectedLayer, setSelectedLayer, action} = useContext(DrawingContext);
   
   const createElement = (id, x1, y1, x2, y2, tool, configs) => {
 
@@ -51,11 +51,16 @@ const DrawingFunctions = () => {
         newElements[index].points = [...newElements[index].points, {x: x2, y: y2}];
         break;
       case "text":
-        const { canvas } = canvasContext();
-        const textWidth = canvas.getContext("2d").measureText(configs.text).width;
-        newElements[index].x2 = newElements[index].x1 + textWidth;
-        newElements[index].y2 = newElements[index].y1 + Number(configs.fontSize);
-        newElements[index].configs = configs;
+        if(action === "writing"){
+          const { canvas } = canvasContext();
+          const textWidth = canvas.getContext("2d").measureText(configs.text).width;
+          newElements[index].x2 = newElements[index].x1 + textWidth;
+          newElements[index].y2 = newElements[index].y1 + Number(configs.fontSize);
+          newElements[index].configs = configs;
+        }
+        else{
+          newElements[index] = createElement(id, x1, y1, x2, y2, tool, configs);
+        }
         break;
       default:
         throw new Error (`Tool not recognized: ${tool}`);
@@ -128,9 +133,9 @@ const DrawingFunctions = () => {
           if(!nextPoint) return false;
           return onLine(point.x, point.y, nextPoint.x, nextPoint.y, x, y, element.configs.size) !== null;
         });
+        return betweenAnyPoint ? "inside" : null;
         case "text":
         return x >= x1 && x <= x2 && y >= y1 && y <= y2 ? "inside" : null;
-        return betweenAnyPoint ? "inside" : null;
       default:
         throw new Error(`Type not recognized: ${type}`);
     }
@@ -217,6 +222,7 @@ const DrawingFunctions = () => {
     return elements.filter(element => {
       switch(element.type){
         case "rectangle":
+        case "text":
           if(
             ((element.x1 >= x1 && element.x1 <= x2 && element.y1 >= y1 && element.y1 <= y2) ||
             (element.x2 >= x1 && element.x2 <= x2 && element.y2 >= y1 && element.y2 <= y2)) 

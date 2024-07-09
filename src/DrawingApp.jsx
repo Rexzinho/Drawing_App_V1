@@ -190,6 +190,7 @@ function DrawingApp() {
       }
       else if(tool === "text"){
         setTextModal(true);
+        setAction("writing");
         configs = {...textConfigs};
       }
       else{
@@ -272,8 +273,23 @@ function DrawingApp() {
     }
   }
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (event) => {
+    
+    const { mouseX, mouseY } = getCanvasCoordinates(event);
+
     if(action === "writing") return;
+
+    if(selectedElements.length === 1){
+      if(selectedElements[0].type === "text" &&
+        mouseX - selectedElements[0].offsetX === selectedElements[0].x1 &&
+        mouseY - selectedElements[0].offsetY === selectedElements[0].y1
+      ){
+        setTextConfigs({...selectedLayer.elements[0].configs});
+        setAction("writing");
+        setTextModal(true);
+        return;
+      }
+    }
 
     if(action === "drawing" || action === "resizing"){
       const index = 0;
@@ -312,7 +328,6 @@ function DrawingApp() {
     };
     setAction("none");
     updateHistory(newHistory);
-    console.log(layers);
   }
   
   return (
